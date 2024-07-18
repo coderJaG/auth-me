@@ -26,6 +26,8 @@ router.get('/', (req, res) => {
     if (user) {
         const safeUser = {
             id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
             email: user.email,
             username: user.username,
         };
@@ -55,13 +57,14 @@ router.post('/', validateLogin, async (req, res, next) => {
         err.errors = { credential: 'The provided cedentiails were invalid.' }
         return next(err);
     }
-
     const safeUser = {
         id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
         username: user.username,
     };
-
+    
     await setTokenCookie(res, safeUser);
 
     return res.json({
