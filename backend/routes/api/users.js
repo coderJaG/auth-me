@@ -41,8 +41,6 @@ router.post('/', validateSignup, async (req, res, next) => {
     const hashedPassword = bcrypt.hashSync(password);
     const user = await User.create({ firstName, lastName, email, username, hashedPassword });
 
-    
-
     const safeUser = {
         id: user.id,
         firstName: user.firstName,
