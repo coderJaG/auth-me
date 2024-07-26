@@ -3,7 +3,7 @@ const router = express.Router();
 
 const { setTokenCookie, requireAuth } = require('../../utils/auth')
 
-const { Spot, Review, User, Image } = require('../../db/models');
+const { Spot, Review, User, Image, UserSpot, sequelize } = require('../../db/models');
 
 
 
@@ -145,10 +145,10 @@ router.get('/:spotId', async (req, res) => {
         const SpotImages = spotParts.Images;
         for (let i = 0; i < SpotImages.length; i++) {
             let image = SpotImages[i]
-            if (!image.url) { 
-                image.url = 'no image' 
+            if (!image.url) {
+                image.url = 'no image'
                 SpotImages[image.url]
-            }; 
+            };
         };
         const Owner = {};
         Owner.id = spotParts.Users[0].id;
@@ -178,6 +178,39 @@ router.get('/:spotId', async (req, res) => {
     });
 
     res.json(...result);
+});
+
+
+//create a spot after user is authenticateed
+router.post('/', requireAuth, async (req, res) => {
+
+
+    const ownerId = req.user.id;
+    const { address, city, state, country, lat, lng, name, description, price } = req.body;
+    const newSpot = Spot.build({
+        ownerId,
+        address,
+        city,
+        state,
+        country,
+        lat,
+        lng,
+        name,
+        description,
+        price
+    });
+
+    await newSpot.save();
+
+    //update UserSpot Table with new spotId and ownerId
+    const updateUserSpot = UserSpot.build({
+        spotId: newSpot.id,
+        ownerId
+    });
+
+    await updateUserSpot.save();
+
+    res.json(newSpot);
 });
 
 
