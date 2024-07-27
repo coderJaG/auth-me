@@ -19,7 +19,7 @@ module.exports = {
       {
         imageableId: 2,
         imageableType: 'Spot',
-        url: null,
+        url: '../../image/image-2png',
         preview: false
       },
       {

@@ -2,11 +2,53 @@ const express = require('express');
 const router = express.Router();
 
 const { setTokenCookie, requireAuth } = require('../../utils/auth')
-
+const { check } = require('express-validator')
+const { handleValidationErrors } = require('../../utils/validation')
 const { Spot, Review, User, Image, UserSpot, sequelize } = require('../../db/models');
 
-
-
+const validateSpotCreation = [
+    check('address')
+        .exists({ checkFalsy: true })
+        .notEmpty()
+        .withMessage('Street address is required'),
+    check('city')
+        .exists({ checkFalsy: true })
+        .notEmpty()
+        .withMessage('City is required'),
+    check('state')
+        .exists({ checkFalsy: true })
+        .notEmpty()
+        .withMessage('state is required'),
+    check('country')
+        .exists({ checkFalsy: true })
+        .notEmpty()
+        .withMessage('Country is required'),
+    check('lat')
+        .exists({ checkFalsy: true })
+        .notEmpty()
+        .isFloat({ min: -90, max: 90 })
+        .withMessage('Latitude must be within -90 and 90'),
+    check('lat')
+        .exists({ checkFalsy: true })
+        .notEmpty()
+        .isFloat({ min: -180, max: 180 })
+        .withMessage('Longitude must be within -90 and 90'),
+    check('name')
+        .exists({ checkFalsy: true })
+        .notEmpty()
+        .isLength({ max: 50 })
+        .withMessage('Name must be less than 50 characters'),
+    check('description')
+        .exists({ checkFalsy: true })
+        .notEmpty()
+        .withMessage('Description is required'),
+    check('price')
+        .exists({ checkFalsy: true })
+        .notEmpty()
+        .isInt({ min: 1 })
+        .withMessage('Price per day must be a positive number'),
+    handleValidationErrors
+]
 //get all spots
 router.get('/', async (req, res) => {
     const getAllSpots = await Spot.findAll({
@@ -57,7 +99,7 @@ router.get('/', async (req, res) => {
 
     })
 
-    res.json({ Spots: result });
+   return res.json({ Spots: result });
 });
 
 //get all spots owned by current User (authenticated)
@@ -106,7 +148,7 @@ router.get('/current', requireAuth, async (req, res) => {
         }
     })
 
-    res.json({ spot: results });
+    return res.json({ spot: results });
 })
 
 //get details of a Spot from a spot id without authentication
@@ -177,13 +219,43 @@ router.get('/:spotId', async (req, res) => {
 
     });
 
-    res.json(...result);
+    return res.json(...result);
 });
 
+//add an image based on spotId
+router.post('/:spotId/images', async (req, res) => {
+    const { spotId } = req.params;
+    const getSpotById = await Spot.findByPk(spotId)
+
+    if (!getSpotById) {
+        return res.status(404).json({
+            "message": "Spot couldn't be found"
+        });
+    };
+
+    const {url, preview} = req.body;
+
+    const newImage = Image.build({
+        imageableId: +spotId,
+        imageableType: 'Spot',
+        url,
+        preview,
+    });
+
+    await newImage.save();
+
+    const result = newImage.toJSON();
+
+    delete result.imageableId;
+    delete result.imageableType;
+    delete result.createdAt;
+    delete result.updatedAt;
+    
+    return res.status(201).json(result)
+})
 
 //create a spot after user is authenticateed
-router.post('/', requireAuth, async (req, res) => {
-
+router.post('/', requireAuth, validateSpotCreation, async (req, res) => {
 
     const ownerId = req.user.id;
     const { address, city, state, country, lat, lng, name, description, price } = req.body;
@@ -210,7 +282,8 @@ router.post('/', requireAuth, async (req, res) => {
 
     await updateUserSpot.save();
 
-    res.json(newSpot);
+    return res.status(201).json(newSpot);
+
 });
 
 

@@ -19,15 +19,15 @@ module.exports = {
       },
       imageableId: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: false,
       },
       imageableType: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       url: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: false,
       },
       preview: {
         type: Sequelize.BOOLEAN,
