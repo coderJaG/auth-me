@@ -6,7 +6,7 @@ const { check } = require('express-validator')
 const { handleValidationErrors } = require('../../utils/validation')
 const { Spot, Review, User, Image, UserSpot, sequelize } = require('../../db/models');
 
-const validateSpotCreation = [
+const validateSpotInfo = [
     check('address')
         .exists({ checkFalsy: true })
         .notEmpty()
@@ -49,6 +49,16 @@ const validateSpotCreation = [
         .withMessage('Price per day must be a positive number'),
     handleValidationErrors
 ]
+
+//check if spot !exists to be true helper function
+// isNotSpot = (getSpotById) => {
+//     if (!getSpotById) {
+//         return res.status(404).json({
+//             "message": "Spot couldn't be found"
+//         });
+//     };
+// }
+
 //get all spots
 router.get('/', async (req, res) => {
     const getAllSpots = await Spot.findAll({
@@ -99,7 +109,7 @@ router.get('/', async (req, res) => {
 
     })
 
-   return res.json({ Spots: result });
+    return res.json({ Spots: result });
 });
 
 //get all spots owned by current User (authenticated)
@@ -174,10 +184,10 @@ router.get('/:spotId', async (req, res) => {
 
     //if no spot is found
     if (!getSpotById) {
-        res.status(404).json({
+        return res.status(404).json({
             "message": "Spot couldn't be found"
         });
-    };
+    };;
 
     //build spot details
     let result = [getSpotById].map(spotParts => {
@@ -233,7 +243,7 @@ router.post('/:spotId/images', async (req, res) => {
         });
     };
 
-    const {url, preview} = req.body;
+    const { url, preview } = req.body;
 
     const newImage = Image.build({
         imageableId: +spotId,
@@ -250,12 +260,12 @@ router.post('/:spotId/images', async (req, res) => {
     delete result.imageableType;
     delete result.createdAt;
     delete result.updatedAt;
-    
+
     return res.status(201).json(result)
 })
 
 //create a spot after user is authenticateed
-router.post('/', requireAuth, validateSpotCreation, async (req, res) => {
+router.post('/', requireAuth, validateSpotInfo, async (req, res) => {
 
     const ownerId = req.user.id;
     const { address, city, state, country, lat, lng, name, description, price } = req.body;
@@ -286,5 +296,35 @@ router.post('/', requireAuth, validateSpotCreation, async (req, res) => {
 
 });
 
+
+//edit a spot
+router.put('/:spotId', requireAuth, validateSpotInfo, async (req, res) => {
+    const { spotId } = req.params;
+    const getSpotById = await Spot.findByPk(spotId);
+
+    if (!getSpotById) {
+        return res.status(404).json({
+            "message": "Spot couldn't be found"
+        });
+    };
+
+    const { address, city, state, country, lat, lng, name, description, price } = req.body
+
+    getSpotById.set({
+        address,
+        city,
+        state,
+        country,
+        lat,
+        lng,
+        name,
+        description,
+        price
+    })
+
+    await getSpotById.save()
+
+    return res.json(getSpotById)
+})
 
 module.exports = router;
