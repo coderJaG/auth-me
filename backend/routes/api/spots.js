@@ -5,6 +5,7 @@ const { setTokenCookie, requireAuth } = require('../../utils/auth')
 const { check } = require('express-validator')
 const { handleValidationErrors } = require('../../utils/validation')
 const { Spot, Review, User, Image, UserSpot, sequelize } = require('../../db/models');
+const { get } = require('./spots');
 
 const validateSpotInfo = [
     check('address')
@@ -235,7 +236,11 @@ router.get('/:spotId', async (req, res) => {
 //add an image based on spotId
 router.post('/:spotId/images', async (req, res) => {
     const { spotId } = req.params;
-    const getSpotById = await Spot.findByPk(spotId)
+    const getSpotById = await Spot.findByPk(spotId, {
+        include: {
+            model: User
+        }
+    })
 
     if (!getSpotById) {
         return res.status(404).json({
@@ -243,25 +248,34 @@ router.post('/:spotId/images', async (req, res) => {
         });
     };
 
-    const { url, preview } = req.body;
+    const currentUserId = req.user.id
+    const spotOwnerId = getSpotById.Users[0].UserSpot.ownerId
 
-    const newImage = Image.build({
-        imageableId: +spotId,
-        imageableType: 'Spot',
-        url,
-        preview,
-    });
+    if (currentUserId === spotOwnerId) {
+        const { url, preview } = req.body;
 
-    await newImage.save();
+        const newImage = Image.build({
+            imageableId: +spotId,
+            imageableType: 'Spot',
+            url,
+            preview,
+        });
 
-    const result = newImage.toJSON();
+        await newImage.save();
 
-    delete result.imageableId;
-    delete result.imageableType;
-    delete result.createdAt;
-    delete result.updatedAt;
+        const result = newImage.toJSON();
 
-    return res.status(201).json(result)
+        delete result.imageableId;
+        delete result.imageableType;
+        delete result.createdAt;
+        delete result.updatedAt;
+
+        return res.status(201).json(result)
+    }
+
+    return res.json({
+        "message": "Not authorized to add image to this spot"
+    })
 })
 
 //create a spot after user is authenticateed
@@ -300,31 +314,42 @@ router.post('/', requireAuth, validateSpotInfo, async (req, res) => {
 //edit a spot
 router.put('/:spotId', requireAuth, validateSpotInfo, async (req, res) => {
     const { spotId } = req.params;
-    const getSpotById = await Spot.findByPk(spotId);
+    const getSpotById = await Spot.findByPk(spotId, {
+        include: {
+            model: User
+        }
+    });
 
     if (!getSpotById) {
         return res.status(404).json({
             "message": "Spot couldn't be found"
         });
     };
+    const currentUserId = req.user.id
+    const spotOwnerId = getSpotById.Users[0].UserSpot.ownerId
 
-    const { address, city, state, country, lat, lng, name, description, price } = req.body
+    if (currentUserId === spotOwnerId) {
+        const { address, city, state, country, lat, lng, name, description, price } = req.body
 
-    getSpotById.set({
-        address,
-        city,
-        state,
-        country,
-        lat,
-        lng,
-        name,
-        description,
-        price
+        getSpotById.set({
+            address,
+            city,
+            state,
+            country,
+            lat,
+            lng,
+            name,
+            description,
+            price
+        })
+
+        await getSpotById.save()
+
+        return res.json(getSpotById)
+    }
+    return res.json({
+        "message": "Not authorized to add image to this spot"
     })
-
-    await getSpotById.save()
-
-    return res.json(getSpotById)
 })
 
 
@@ -332,19 +357,30 @@ router.put('/:spotId', requireAuth, validateSpotInfo, async (req, res) => {
 
 router.delete('/:spotId', requireAuth, async (req, res) => {
     const { spotId } = req.params;
-    const getSpotById = await Spot.findByPk(spotId);
+    const getSpotById = await Spot.findByPk(spotId, {
+        include: {
+            model: User
+        }
+    });
 
     if (!getSpotById) {
         return res.status(404).json({
             "message": "Spot couldn't be found"
         });
     };
+    const currentUserId = req.user.id
+    const spotOwnerId = getSpotById.Users[0].UserSpot.ownerId
 
-    await getSpotById.destroy();
+    if (currentUserId === spotOwnerId) {
+        await getSpotById.destroy();
 
+        return res.json({
+            "message": "Successfully deleted"
+        });
+    }
     return res.json({
-        "message": "Successfully deleted"
-    });
+        "message": "Not authorized to add image to this spot"
+    })
 
 });
 
