@@ -23,17 +23,20 @@ module.exports = {
       {
       review: 'This is a good spot',
       stars: 4,
-      spotId: 2
+      spotId: 2,
+      userId: 2
     },
     {
       review: 'This is not a good spot',
       stars: 1,
-      spotId: 1
+      spotId: 1,
+      userId: 1
     },
     {
       review: 'This is not a good spot',
       stars: 5,
-      spotId: 1
+      spotId: 1,
+      userId: 1
     },
 
   ])

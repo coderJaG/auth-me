@@ -4,7 +4,7 @@ const router = express.Router();
 const { setTokenCookie, requireAuth } = require('../../utils/auth')
 const { check } = require('express-validator')
 const { handleValidationErrors } = require('../../utils/validation')
-const { Spot, Review, User, Image, UserSpot, sequelize } = require('../../db/models');
+const { Spot, Review, User, Image } = require('../../db/models');
 const { get } = require('./spots');
 
 const validateSpotInfo = [
@@ -63,6 +63,7 @@ const validateSpotInfo = [
 //get all spots
 router.get('/', async (req, res) => {
     const getAllSpots = await Spot.findAll({
+
         include: [{
             model: Review,
             attributes: ['stars'],
@@ -71,18 +72,13 @@ router.get('/', async (req, res) => {
             model: Image,
             attributes: ['url', 'preview']
         }
-            ,
-        {
-            model: User,
-            attributes: ['id']
-        }
         ]
     });
 
-    //build spot details
+    // build spot details
     const result = getAllSpots.map(spot => {
 
-        const ownerId = spot.Users[0].UserSpot.ownerId
+
         let avgRating;
         if (!spot.Reviews.length) {
             avgRating = 'Not yet rated'
@@ -93,7 +89,7 @@ router.get('/', async (req, res) => {
 
         return {
             id: spot.id,
-            ownerId,
+            ownerId: spot.ownerId,
             address: spot.address,
             city: spot.city,
             country: spot.country,
@@ -109,41 +105,34 @@ router.get('/', async (req, res) => {
         }
 
     })
-
     return res.json({ Spots: result });
+
 });
 
 //get all spots owned by current User (authenticated)
 router.get('/current', requireAuth, async (req, res) => {
     let userId = req.user.id
-    const getUserSpots = await User.findByPk(userId, {
-        attributes: [],
+    const getUserSpots = await Spot.findByPk(userId, {
         include: [
             {
-                model: Spot,
-                include: [
-                    {
-                        model: Review,
-                        attributes: ['stars']
-                    },
-                    {
-                        model: Image,
-                        attributes: ['url', 'preview']
-                    },
-                ],
+                model: Review,
+                attributes: ['stars']
             },
-        ]
+            {
+                model: Image,
+                attributes: ['url', 'preview']
+            },
+        ],
     });
 
     //build spot details
-    const results = getUserSpots.Spots.map(spot => {
-        const ownerId = spot.UserSpot.ownerId;
+    const results = [getUserSpots].map(spot => {
         const avgRatings = (spot.Reviews.reduce((acc, rating) => acc + rating.stars, 0) / spot.Reviews.length).toFixed(1);
         const avgRating = parseFloat(avgRatings)
-        const previewImage = spot.Images.preview ? spot.Images.url : 'No image';
+        const previewImage = spot.Images[0].preview ? spot.Images[0].url : 'No image';
         return {
             id: spot.id,
-            ownerId,
+            ownerId: spot.ownerId,
             address: spot.address,
             city: spot.city,
             country: spot.country,
@@ -159,7 +148,7 @@ router.get('/current', requireAuth, async (req, res) => {
         }
     })
 
-    return res.json({ spot: results });
+    return res.json({ Spots: results });
 })
 
 //get details of a Spot from a spot id without authentication
@@ -190,11 +179,10 @@ router.get('/:spotId', async (req, res) => {
         });
     };;
 
-    //build spot details
+    //     //build spot details
     let result = [getSpotById].map(spotParts => {
-        const ownerId = spotParts.Users[0].UserSpot.ownerId;
         const numReviews = spotParts.Reviews.length;
-        const avgRating = spotParts.Reviews.reduce((acc, rating) => acc + rating.stars, 0) / numReviews;
+        const avgStarRating = spotParts.Reviews.reduce((acc, rating) => acc + rating.stars, 0) / numReviews;
         const SpotImages = spotParts.Images;
         for (let i = 0; i < SpotImages.length; i++) {
             let image = SpotImages[i]
@@ -204,14 +192,14 @@ router.get('/:spotId', async (req, res) => {
             };
         };
         const Owner = {};
-        Owner.id = spotParts.Users[0].id;
-        Owner.firstName = spotParts.Users[0].firstName;
-        Owner.lastName = spotParts.Users[0].lastName;
+        Owner.id = spotParts.User.id;
+        Owner.firstName = spotParts.User.firstName;
+        Owner.lastName = spotParts.User.lastName;
 
 
         return {
             id: spotParts.id,
-            ownerId,
+            ownerId: spotParts.ownerId,
             address: spotParts.address,
             city: spotParts.city,
             country: spotParts.country,
@@ -223,23 +211,20 @@ router.get('/:spotId', async (req, res) => {
             createdAt: spotParts.createdAt,
             updatedAt: spotParts.updatedAt,
             numReviews,
-            avgRating,
+            avgStarRating,
             SpotImages,
             Owner
         };
 
     });
 
-    return res.json(...result);
+    return res.json(result);
 });
 
 //add an image based on spotId
 router.post('/:spotId/images', async (req, res) => {
     const { spotId } = req.params;
     const getSpotById = await Spot.findByPk(spotId, {
-        include: {
-            model: User
-        }
     })
 
     if (!getSpotById) {
@@ -249,7 +234,7 @@ router.post('/:spotId/images', async (req, res) => {
     };
 
     const currentUserId = req.user.id
-    const spotOwnerId = getSpotById.Users[0].UserSpot.ownerId
+    const spotOwnerId = getSpotById.ownerId
 
     if (currentUserId === spotOwnerId) {
         const { url, preview } = req.body;
@@ -282,42 +267,31 @@ router.post('/:spotId/images', async (req, res) => {
 router.post('/', requireAuth, validateSpotInfo, async (req, res) => {
 
     const ownerId = req.user.id;
-    const { address, city, state, country, lat, lng, name, description, price } = req.body;
-    const newSpot = Spot.build({
-        ownerId,
-        address,
-        city,
-        state,
-        country,
-        lat,
-        lng,
-        name,
-        description,
-        price
-    });
+        const { address, city, state, country, lat, lng, name, description, price } = req.body;
+        const newSpot = Spot.build({
+            ownerId,
+            address,
+            city,
+            state,
+            country,
+            lat,
+            lng,
+            name,
+            description,
+            price
+        });
 
-    await newSpot.save();
+         await newSpot.save();
 
-    //update UserSpot Table with new spotId and ownerId
-    const updateUserSpot = UserSpot.build({
-        spotId: newSpot.id,
-        ownerId
-    });
-
-    await updateUserSpot.save();
-
-    return res.status(201).json(newSpot);
+        return res.status(201).json(newSpot);
 
 });
 
 
 //edit a spot
-router.put('/:spotId', requireAuth, validateSpotInfo, async (req, res) => {
+ router.put('/:spotId', requireAuth, validateSpotInfo, async (req, res) => {
     const { spotId } = req.params;
-    const getSpotById = await Spot.findByPk(spotId, {
-        include: {
-            model: User
-        }
+     const getSpotById = await Spot.findByPk(spotId, {
     });
 
     if (!getSpotById) {
@@ -326,7 +300,7 @@ router.put('/:spotId', requireAuth, validateSpotInfo, async (req, res) => {
         });
     };
     const currentUserId = req.user.id
-    const spotOwnerId = getSpotById.Users[0].UserSpot.ownerId
+    const spotOwnerId = getSpotById.ownerId
 
     if (currentUserId === spotOwnerId) {
         const { address, city, state, country, lat, lng, name, description, price } = req.body
@@ -350,7 +324,8 @@ router.put('/:spotId', requireAuth, validateSpotInfo, async (req, res) => {
     return res.json({
         "message": "Not authorized to add image to this spot"
     })
-})
+return res.json(getSpotById)
+ })
 
 
 //delete a spot
@@ -358,9 +333,6 @@ router.put('/:spotId', requireAuth, validateSpotInfo, async (req, res) => {
 router.delete('/:spotId', requireAuth, async (req, res) => {
     const { spotId } = req.params;
     const getSpotById = await Spot.findByPk(spotId, {
-        include: {
-            model: User
-        }
     });
 
     if (!getSpotById) {
@@ -369,7 +341,7 @@ router.delete('/:spotId', requireAuth, async (req, res) => {
         });
     };
     const currentUserId = req.user.id
-    const spotOwnerId = getSpotById.Users[0].UserSpot.ownerId
+    const spotOwnerId = getSpotById.ownerId
 
     if (currentUserId === spotOwnerId) {
         await getSpotById.destroy();
