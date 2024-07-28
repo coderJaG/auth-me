@@ -58,16 +58,22 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DECIMAL,
       allowNull: false,
       validate: {
-        min: -90,
-        max: 90
+        isValid (value){
+          if (value < -90 || value > 90){
+            throw new Error('Latitiude must be between -90 and 90')
+          }
+        }
       }
     },
     lng: {
       type: DataTypes.DECIMAL,
       allowNull: false,
       validate: {
-        min: -180,
-        max: 180
+        isValid (value){
+          if (value < -180 || value > 1800){
+            throw new Error('Longitiude umst be between -180 and 180')
+          }
+        }
       }
     },
     name: {
