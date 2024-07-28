@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       });
       Image.belongsTo(models.Review, {
         foreignKey: 'imageableId',
-        constraints: false
+        constraints: false,
       });
     }
   }
