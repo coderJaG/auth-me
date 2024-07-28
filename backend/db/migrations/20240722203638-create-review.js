@@ -13,20 +13,20 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      review: {
-        type: Sequelize.STRING,
-        allowNull: true
-      },
-      stars: {
-        type: Sequelize.DECIMAL(2,1),
+      userId: {
+        type: Sequelize.INTEGER,
         allowNull: false
       },
       spotId: {
         type: Sequelize.INTEGER,
         allowNull: false
       },
-      userId: {
-        type: Sequelize.INTEGER,
+      review: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      stars: {
+        type: Sequelize.DECIMAL(2,1),
         allowNull: false
       },
       createdAt: {

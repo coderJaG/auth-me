@@ -42,7 +42,7 @@ router.get('/current', requireAuth, async (req, res) => {
             price: review.Spot.price,
             createdAt: review.Spot.createdAt,
             updatedAt: review.Spot.updatedAt
-        }
+        };
 
         let ReviewImages;
 
@@ -56,7 +56,7 @@ router.get('/current', requireAuth, async (req, res) => {
         } else {
             ReviewImages = { 'Images': 'no images' }
             Spot.previewImage = 'no image'
-        }
+        };
 
         return {
             id: review.id,
@@ -69,13 +69,8 @@ router.get('/current', requireAuth, async (req, res) => {
             User: review.User,
             Spot,
             ReviewImages
-        }
-
-        
-    })
-
-
-
+        };
+    });
     return res.json({Reviews: result});
 })
 

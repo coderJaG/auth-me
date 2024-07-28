@@ -267,31 +267,31 @@ router.post('/:spotId/images', async (req, res) => {
 router.post('/', requireAuth, validateSpotInfo, async (req, res) => {
 
     const ownerId = req.user.id;
-        const { address, city, state, country, lat, lng, name, description, price } = req.body;
-        const newSpot = Spot.build({
-            ownerId,
-            address,
-            city,
-            state,
-            country,
-            lat,
-            lng,
-            name,
-            description,
-            price
-        });
+    const { address, city, state, country, lat, lng, name, description, price } = req.body;
+    const newSpot = Spot.build({
+        ownerId,
+        address,
+        city,
+        state,
+        country,
+        lat,
+        lng,
+        name,
+        description,
+        price
+    });
 
-         await newSpot.save();
+    await newSpot.save();
 
-        return res.status(201).json(newSpot);
+    return res.status(201).json(newSpot);
 
 });
 
 
 //edit a spot
- router.put('/:spotId', requireAuth, validateSpotInfo, async (req, res) => {
+router.put('/:spotId', requireAuth, validateSpotInfo, async (req, res) => {
     const { spotId } = req.params;
-     const getSpotById = await Spot.findByPk(spotId, {
+    const getSpotById = await Spot.findByPk(spotId, {
     });
 
     if (!getSpotById) {
@@ -319,13 +319,12 @@ router.post('/', requireAuth, validateSpotInfo, async (req, res) => {
 
         await getSpotById.save()
 
-        return res.json(getSpotById)
-    }
+        return res.json(getSpotById);
+    };
     return res.json({
         "message": "Not authorized to add image to this spot"
-    })
-return res.json(getSpotById)
- })
+    });
+});
 
 
 //delete a spot
@@ -356,7 +355,40 @@ router.delete('/:spotId', requireAuth, async (req, res) => {
 
 });
 
+// get all reviews by spotId
+router.get('/:spotId/reviews', async (req, res) => {
+    const { spotId } = req.params;
 
+    if (!(await Spot.findByPk(spotId))) {
+        return res.status(404).json({
+            "message": "Spot couldn't be found"
+        });
+    }
+
+    const getAllReviews = await Review.findAll({
+        where: { spotId },
+        include: [
+            {
+                model: User,
+                attributes: ['id', 'firstName', 'lastName']
+            },
+            {
+                model: Image,
+                attributes: ['id', 'url']
+            }
+        ]
+    });
+
+
+    let result = getAllReviews.map(reviews => {
+        let review = reviews.toJSON();
+        review['ReviewImages'] = review['Images'];
+        delete review['Images'];
+
+        return review;
+    });
+    return res.json({ Reviews: result });
+});
 
 
 module.exports = router;
