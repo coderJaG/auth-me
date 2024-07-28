@@ -25,6 +25,7 @@ router.get('/current', requireAuth, async (req, res) => {
         ],
     });
 
+    //build review results
     let result = getReviewsById.map(review => {
 
         let Spot = {
