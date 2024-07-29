@@ -102,12 +102,45 @@ router.put('/:bookingId', requireAuth, async (req, res) => {
         };
     };
 
-    res.status(403).json({"message": "Only booking creator can edit booking"});
+    res.status(403).json({ "message": "Only booking creator can edit booking" });
 
 });
 
 
+//delete a booking
+router.delete('/:bookingId', requireAuth, async (req, res) => {
+    const currentUserId = req.user.id;
+    const { bookingId } = req.params;
 
+    const getBookingById = await Booking.findByPk(bookingId, {
+        include: [
+            { model: Spot }
+        ]
+    });
+    //chek if booking exist
+    if (!getBookingById) {
+        return res.status(404).json({
+            "message": "Booking couldn't be found"
+        });
+    };
+    //delete booking only if current user owns spot or created booking
+    if (currentUserId === getBookingById.userId || currentUserId === getBookingById.Spot.ownerId) {
+        let today = new Date().toJSON().slice(0, 10);
+        if (today >= getBookingById.startDate) {
+            res.status(403).json({
+                "message": "Bookings that have been started can't be deleted"
+            });
+        }
+        else {
+            await getBookingById.destroy()
+            res.json({
+                "message": "Successfully deleted"
+            });
+        }
+    };
+    res.status(403).json({"message": "Only spot owner or booking creator can delete booking"});
+
+});
 
 
 
