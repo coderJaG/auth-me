@@ -4,7 +4,7 @@ const router = express.Router();
 const { setTokenCookie, requireAuth } = require('../../utils/auth')
 const { check } = require('express-validator')
 const { handleValidationErrors } = require('../../utils/validation')
-const { Spot, Review, User, Image } = require('../../db/models');
+const { Spot, Review, User, Image, Booking } = require('../../db/models');
 
 
 const validateSpotInfo = [
@@ -406,25 +406,74 @@ router.post('/:spotId/reviews', requireAuth, async (req, res) => {
     if (await Review.findOne({
         where: {
             spotId, userId
-    }})) {
+        }
+    })) {
         return res.status(500).json({
             "message": "User already has a review for this spot"
         });
     }
-    
-        const { review, stars } = req.body;
-        const newReview = Review.build({
-            userId,
-            spotId,
-            review,
-            stars
+
+    const { review, stars } = req.body;
+    const newReview = Review.build({
+        userId,
+        spotId,
+        review,
+        stars
+    });
+
+    await newReview.save();
+
+    res.status(201).json(newReview);
+
+
+});
+
+
+//Get all bookings for a spot based on spotId
+router.get('/:spotId/bookings', requireAuth, async (req, res) => {
+    const { spotId } = req.params;
+    const currentUserId = req.user.id;
+
+    //check if spot exists
+    if (!(await Spot.findByPk(spotId))) {
+        return res.status(404).json({
+            "message": "Spot couldn't be found"
         });
+    };
 
-        await newReview.save();
+    const getAllBookingsBySpotId = await Booking.findAll({
+        where: { spotId },
+        include: [
+            {
+                model: User,
+                attributes: ['id', 'firstName', 'lastName']
+            }
+        ]
+    });
+    //if no bookings found
+    if (!getAllBookingsBySpotId.length) {
+        return res.status(404).json({
+            "message": "No bookings found"
+        });
+    };
 
-        res.status(201).json(newReview);
-  
-
+    const bookingsData = getAllBookingsBySpotId[0].toJSON();
+    //build results
+    if (currentUserId === bookingsData.User.id){
+        const User = bookingsData.User
+        delete bookingsData.User
+        let result  = [{User,
+            ...bookingsData
+        }]
+        return res.json({Bookings: result});
+    } else{
+        result = [{
+            spotId: bookingsData.spotId,
+            startDate: bookingsData.startDate,
+            endDate: bookingsData.endDate
+        }];
+        return res.json({Bookings: result});
+    };
 });
 
 
