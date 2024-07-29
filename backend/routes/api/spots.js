@@ -5,6 +5,7 @@ const { setTokenCookie, requireAuth } = require('../../utils/auth')
 const { check } = require('express-validator')
 const { handleValidationErrors } = require('../../utils/validation')
 const { Spot, Review, User, Image, Booking } = require('../../db/models');
+const { get } = require('./bookings');
 
 
 const validateSpotInfo = [
@@ -476,5 +477,60 @@ router.get('/:spotId/bookings', requireAuth, async (req, res) => {
     };
 });
 
+//create a booking on spotId
 
+router.post('/:spotId/bookings', requireAuth, async (req, res) => {
+    const currentUserId = req.user.id;
+    const {spotId} = req.params;
+
+    const getSpotById = await Spot.findByPk(spotId, {
+        include: [
+            {model: Booking}
+        ]
+    })
+    //check f spot exist
+    if(!getSpotById){
+        res.status(404).json({
+            "message": "Spot couldn't be found"
+          });
+    };
+    
+    if(currentUserId !== getSpotById.ownerId){
+        const {startDate, endDate} = req.body;
+
+        let bookingConflict;
+        for (const booking of getSpotById.Bookings) {
+            if (startDate >= booking.startDate && startDate < booking.endDate
+                || endDate >= booking.startDate && endDate <= booking.endDate
+            ) {
+                bookingConflict = true;
+            }
+        };
+
+        if (bookingConflict){
+            return res.status(403).json({
+                "message": "Sorry, this spot is already booked for the specified dates",
+                "errors": {
+                    "startDate": "Start date conflicts with an existing booking",
+                    "endDate": "End date conflicts with an existing booking"
+                }
+            });
+        } else{
+            const newBooking = Booking.build({
+                spotId: +spotId,
+                userId: currentUserId,
+                startDate,
+                endDate
+            });
+
+            await newBooking.save();
+
+
+
+            res.status(201).json(newBooking);
+        };
+    };
+
+    res.status(403).json({"message": "Cannot create booking on your own spot"});
+});
 module.exports = router;

@@ -69,9 +69,11 @@ router.put('/:bookingId', requireAuth, async (req, res) => {
 
         let bookingConflict;
         for (const booking of getAllBookings) {
-            if (booking.startDate === startDate && booking.endDate === endDate) {
+            if (startDate >= booking.startDate && startDate < booking.endDate
+                || endDate >= booking.startDate && endDate <= booking.endDate
+            ) {
                 bookingConflict = true;
-            };
+            }
         };
 
         //check if booking has passed
@@ -100,7 +102,7 @@ router.put('/:bookingId', requireAuth, async (req, res) => {
         };
     };
 
-    res.status(403).json({"message": "Only booking creator can edit booking"})
+    res.status(403).json({"message": "Only booking creator can edit booking"});
 
 });
 
