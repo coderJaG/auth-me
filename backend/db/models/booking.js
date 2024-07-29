@@ -5,11 +5,11 @@ const {
 
 // check if date entered is valid helper function
 const isValidDate = (value) => {
-  const dateFormat = /^\d{2}\/\d{2}\/\d{2}\$/
+  const dateFormat = /^\d{4}\-\d{2}\-\d{2}$/
   if (!dateFormat.test(value)) {
     throw new Error('Date must be in the format MM/DD/YYYY')
   }
-  const [mm, dd, yy] = value.split('/');
+  const [yy, mm, dd] = value.split('-');
   const month = +mm;
   const day = +dd;
   const year = +yy;
@@ -55,7 +55,7 @@ module.exports = (sequelize, DataTypes) => {
           const dateCheck = isValidDate(value)
           const today = new Date();
           if (dateCheck < today){
-            throw new Error('Cannot be before today\'s date')
+            throw new Error('startDate cannot be in the past')
           }
         }
       }
@@ -65,11 +65,13 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         len: [10,10],
-        isBeforeStartDate(value) {
+        isBeforeStartDateOrToday(value) {
+          const today = new Date();
           const dateCheck = isValidDate(value)
-          if (dateCheck < Booking.startDate){
-            throw new Error('Cannot be before start date')
-          }
+          const startDate = isValidDate(this.getDataValue('startDate'))
+          if (dateCheck <= startDate ){
+            throw new Error('endDate cannot be on or before startDate')
+          };    
         }
       }
     }
