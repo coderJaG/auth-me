@@ -11,7 +11,8 @@ router.delete('/:imageId', requireAuth, async (req, res) => {
     const currentUserId = req.user.id;
     const {imageId} = req.params;
 
-    const getImageById = await Image.findByPk(imageId, {
+    const getImageById = await Image.findOne({
+        where: { id: imageId, imageableType: 'Spot' },
         include: [
             {model: Spot}
         ]
