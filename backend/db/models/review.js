@@ -39,7 +39,14 @@ module.exports = (sequelize, DataTypes) => {
     },
     review: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: false,
+      validate: {
+        isValid(value){
+          if(!value){
+            throw new Error('Review text is required');
+          };
+        }
+      }
     },
     stars: {
       type: DataTypes.INTEGER,
@@ -47,8 +54,11 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         isNumeric: true,
         isDecimal: false,
-        min: 1,
-        max: 5
+        isValid(value){
+          if(value < 1 || value > 5){
+            throw new Error('Stars must be an integer from 1 to 5');
+          };
+        },
       }
     },
 

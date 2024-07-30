@@ -5,52 +5,9 @@ const { setTokenCookie, requireAuth } = require('../../utils/auth')
 const { check } = require('express-validator')
 const { handleValidationErrors } = require('../../utils/validation')
 const { Spot, Review, User, Image, Booking } = require('../../db/models');
-const { get } = require('./bookings');
 
 
-const validateSpotInfo = [
-    check('address')
-        .exists({ checkFalsy: true })
-        .notEmpty()
-        .withMessage('Street address is required'),
-    check('city')
-        .exists({ checkFalsy: true })
-        .notEmpty()
-        .withMessage('City is required'),
-    check('state')
-        .exists({ checkFalsy: true })
-        .notEmpty()
-        .withMessage('state is required'),
-    check('country')
-        .exists({ checkFalsy: true })
-        .notEmpty()
-        .withMessage('Country is required'),
-    check('lat')
-        .exists({ checkFalsy: true })
-        .notEmpty()
-        .isFloat({ min: -90, max: 90 })
-        .withMessage('Latitude must be within -90 and 90'),
-    check('lat')
-        .exists({ checkFalsy: true })
-        .notEmpty()
-        .isFloat({ min: -180, max: 180 })
-        .withMessage('Longitude must be within -90 and 90'),
-    check('name')
-        .exists({ checkFalsy: true })
-        .notEmpty()
-        .isLength({ max: 50 })
-        .withMessage('Name must be less than 50 characters'),
-    check('description')
-        .exists({ checkFalsy: true })
-        .notEmpty()
-        .withMessage('Description is required'),
-    check('price')
-        .exists({ checkFalsy: true })
-        .notEmpty()
-        .isInt({ min: 1 })
-        .withMessage('Price per day must be a positive number'),
-    handleValidationErrors
-]
+
 
 //check if spot !exists to be true helper function
 // isNotSpot = (getSpotById) => {
@@ -78,15 +35,13 @@ router.get('/', async (req, res) => {
 
     // build spot details
     const result = getAllSpots.map(spot => {
-
-
         let avgRating;
         if (!spot.Reviews.length) {
             avgRating = 'Not yet rated'
         } else {
             avgRating = (spot.Reviews.reduce((acc, rating) => acc + rating.stars, 0) / spot.Reviews.length).toFixed(1);
         }
-        const previewImage = spot.Images[0].preview ? spot.Images[0].url : 'No image'
+        const previewImage = spot.Images[0].preview ? spot.Images[0].url : 'No image';
 
         return {
             id: spot.id,
@@ -105,7 +60,7 @@ router.get('/', async (req, res) => {
             previewImage,
         }
 
-    })
+    });
     return res.json({ Spots: result });
 
 });
@@ -129,7 +84,7 @@ router.get('/current', requireAuth, async (req, res) => {
     //build spot details
     const results = [getUserSpots].map(spot => {
         const avgRatings = (spot.Reviews.reduce((acc, rating) => acc + rating.stars, 0) / spot.Reviews.length).toFixed(1);
-        const avgRating = parseFloat(avgRatings)
+        const avgRating = parseFloat(avgRatings);
         const previewImage = spot.Images[0].preview ? spot.Images[0].url : 'No image';
         return {
             id: spot.id,
@@ -147,10 +102,10 @@ router.get('/current', requireAuth, async (req, res) => {
             avgRating,
             previewImage,
         }
-    })
+    });
 
     return res.json({ Spots: results });
-})
+});
 
 //get details of a Spot from a spot id without authentication
 
@@ -178,7 +133,7 @@ router.get('/:spotId', async (req, res) => {
         return res.status(404).json({
             "message": "Spot couldn't be found"
         });
-    };;
+    };
 
     //     //build spot details
     let result = [getSpotById].map(spotParts => {
@@ -226,7 +181,7 @@ router.get('/:spotId', async (req, res) => {
 router.post('/:spotId/images', async (req, res) => {
     const { spotId } = req.params;
     const getSpotById = await Spot.findByPk(spotId, {
-    })
+    });
 
     if (!getSpotById) {
         return res.status(404).json({
@@ -234,8 +189,8 @@ router.post('/:spotId/images', async (req, res) => {
         });
     };
 
-    const currentUserId = req.user.id
-    const spotOwnerId = getSpotById.ownerId
+    const currentUserId = req.user.id;
+    const spotOwnerId = getSpotById.ownerId;
 
     if (currentUserId === spotOwnerId) {
         const { url, preview } = req.body;
@@ -257,15 +212,15 @@ router.post('/:spotId/images', async (req, res) => {
         delete result.updatedAt;
 
         return res.status(201).json(result)
-    }
+    };
 
     return res.json({
         "message": "Not authorized to add image to this spot"
-    })
-})
+    });
+});
 
 //create a spot after user is authenticateed
-router.post('/', requireAuth, validateSpotInfo, async (req, res) => {
+router.post('/', requireAuth, async (req, res) => {
 
     const ownerId = req.user.id;
     const { address, city, state, country, lat, lng, name, description, price } = req.body;
@@ -290,7 +245,7 @@ router.post('/', requireAuth, validateSpotInfo, async (req, res) => {
 
 
 //edit a spot
-router.put('/:spotId', requireAuth, validateSpotInfo, async (req, res) => {
+router.put('/:spotId', requireAuth, async (req, res) => {
     const { spotId } = req.params;
     const getSpotById = await Spot.findByPk(spotId, {
     });
@@ -352,7 +307,7 @@ router.delete('/:spotId', requireAuth, async (req, res) => {
     }
     return res.json({
         "message": "Not authorized to add image to this spot"
-    })
+    });
 
 });
 
@@ -364,7 +319,7 @@ router.get('/:spotId/reviews', async (req, res) => {
         return res.status(404).json({
             "message": "Spot couldn't be found"
         });
-    }
+    };
 
     const getAllReviews = await Review.findAll({
         where: { spotId },
@@ -460,20 +415,21 @@ router.get('/:spotId/bookings', requireAuth, async (req, res) => {
 
     const bookingsData = getAllBookingsBySpotId[0].toJSON();
     //build results
-    if (currentUserId === bookingsData.User.id){
+    if (currentUserId === bookingsData.User.id) {
         const User = bookingsData.User
         delete bookingsData.User
-        let result  = [{User,
+        let result = [{
+            User,
             ...bookingsData
         }]
-        return res.json({Bookings: result});
-    } else{
+        return res.json({ Bookings: result });
+    } else {
         result = [{
             spotId: bookingsData.spotId,
             startDate: bookingsData.startDate,
             endDate: bookingsData.endDate
         }];
-        return res.json({Bookings: result});
+        return res.json({ Bookings: result });
     };
 });
 
@@ -481,56 +437,65 @@ router.get('/:spotId/bookings', requireAuth, async (req, res) => {
 
 router.post('/:spotId/bookings', requireAuth, async (req, res) => {
     const currentUserId = req.user.id;
-    const {spotId} = req.params;
+    const { spotId } = req.params;
 
     const getSpotById = await Spot.findByPk(spotId, {
         include: [
-            {model: Booking}
+            { model: Booking }
         ]
     })
-    //check f spot exist
-    if(!getSpotById){
+    //check if spot exist
+    if (!getSpotById) {
         res.status(404).json({
             "message": "Spot couldn't be found"
-          });
+        });
     };
-    
-    if(currentUserId !== getSpotById.ownerId){
-        const {startDate, endDate} = req.body;
 
-        let bookingConflict;
+    if (currentUserId !== getSpotById.ownerId) {
+        const { startDate, endDate } = req.body;
+
+        //check for booking conflicts;
         for (const booking of getSpotById.Bookings) {
             if (startDate >= booking.startDate && startDate < booking.endDate
-                || endDate >= booking.startDate && endDate <= booking.endDate
-            ) {
-                bookingConflict = true;
-            }
+                && endDate >= booking.startDate && endDate <= booking.endDate
+                || startDate <= booking.startDate && endDate >= booking.endDate) {
+                return res.status(403).json({
+                    "message": "Sorry, this spot is already booked for the specified dates",
+                    "errors": {
+                        "startDate": "Start date conflicts with an existing booking",
+                        "endDate": "End date conflicts with an existing booking"
+                    }
+                });
+            } else if (startDate >= booking.startDate && startDate < booking.endDate) {
+                return res.status(403).json({
+                    "message": "Sorry, this spot is already booked for the specified dates",
+                    "errors": {
+                        "startDate": "Start date conflicts with an existing booking"
+                    }
+                });
+            } else if (endDate >= booking.startDate && endDate <= booking.endDate) {
+                return res.status(403).json({
+                    "message": "Sorry, this spot is already booked for the specified dates",
+                    "errors": {
+                        "endDate": "End date conflicts with an existing booking"
+                    }
+                });
+            };
         };
 
-        if (bookingConflict){
-            return res.status(403).json({
-                "message": "Sorry, this spot is already booked for the specified dates",
-                "errors": {
-                    "startDate": "Start date conflicts with an existing booking",
-                    "endDate": "End date conflicts with an existing booking"
-                }
-            });
-        } else{
-            const newBooking = Booking.build({
-                spotId: +spotId,
-                userId: currentUserId,
-                startDate,
-                endDate
-            });
+        // create booking
+        const newBooking = Booking.build({
+            spotId: +spotId,
+            userId: currentUserId,
+            startDate,
+            endDate
+        });
 
-            await newBooking.save();
+        await newBooking.save();
 
-
-
-            res.status(201).json(newBooking);
-        };
+        res.status(201).json(newBooking);
     };
 
-    res.status(403).json({"message": "Cannot create booking on your own spot"});
+    res.status(403).json({ "message": "Cannot create booking on your own spot" });
 });
 module.exports = router;

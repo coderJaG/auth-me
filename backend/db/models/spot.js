@@ -43,19 +43,47 @@ module.exports = (sequelize, DataTypes) => {
     address: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true
+      unique: true,
+      validate: {
+       isValid(value){
+        if(!value){
+          throw new Error('Street address is required')
+        }
+       }
+      }
     },
     city: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        isValid(value){
+          if(!value){
+            throw new Error('City is required')
+          }
+         }
+      }
     },
     state: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        isValid(value){
+          if(!value){
+            throw new Error('State is required')
+          }
+         }
+      }
     },
     country: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        isValid(value){
+          if(!value){
+            throw new Error('Country is required')
+          }
+         }
+      }
     },
     lat: {
       type: DataTypes.DECIMAL,
@@ -74,7 +102,7 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         isValid (value){
           if (value < -180 || value > 1800){
-            throw new Error('Longitiude umst be between -180 and 180')
+            throw new Error('Longitiude must be between -180 and 180')
           }
         }
       }
@@ -82,15 +110,35 @@ module.exports = (sequelize, DataTypes) => {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true
+      unique: true,
+      validate: {
+        isValid(value){
+          if(value.length  > 50 ){
+            throw new Error("Name must be less than 50 characters");
+          }
+        }
+      }
     },
     description: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        isValid(value){
+          if(!value){
+            throw new Error('Description is required')
+          }
+         }
+      }
     },
     price: {
       type: DataTypes.DECIMAL,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        isFloat: {
+          min: 1,
+          msg: "Price per day must be a positive number"
+        }
+      }
     }
   }, {
     sequelize,

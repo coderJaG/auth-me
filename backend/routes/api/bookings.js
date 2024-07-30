@@ -67,39 +67,53 @@ router.put('/:bookingId', requireAuth, async (req, res) => {
     if (currentUserId === getBookingById.userId) {
         const { startDate, endDate } = req.body;
 
-        let bookingConflict;
-        for (const booking of getAllBookings) {
-            if (startDate >= booking.startDate && startDate < booking.endDate
-                || endDate >= booking.startDate && endDate <= booking.endDate
-            ) {
-                bookingConflict = true;
-            }
-        };
-
         //check if booking has passed
         let today = new Date().toJSON().slice(0, 10);
         if (getBookingById.endDate < today) {
             return res.status(403).json({
                 "message": "Past bookings can't be modified"
             });
-        } else if (bookingConflict) {
-            return res.status(403).json({
-                "message": "Sorry, this spot is already booked for the specified dates",
-                "errors": {
-                    "startDate": "Start date conflicts with an existing booking",
-                    "endDate": "End date conflicts with an existing booking"
-                }
-            });
-        } else {
-            getBookingById.set({
-                startDate,
-                endDate
-            });
+        }
 
-            await getBookingById.save();
-
-            res.json(getBookingById);
+        //check for booking conflicts;
+        for (const booking of getAllBookings) {
+            if (startDate >= booking.startDate && startDate < booking.endDate
+                && endDate >= booking.startDate && endDate <= booking.endDate
+                || startDate <= booking.startDate && endDate >= booking.endDate) {
+                return res.status(403).json({
+                    "message": "Sorry, this spot is already booked for the specified dates",
+                    "errors": {
+                        "startDate": "Start date conflicts with an existing booking",
+                        "endDate": "End date conflicts with an existing booking"
+                    }
+                });
+            } else if (startDate >= booking.startDate && startDate < booking.endDate) {
+                return res.status(403).json({
+                    "message": "Sorry, this spot is already booked for the specified dates",
+                    "errors": {
+                        "startDate": "Start date conflicts with an existing booking"
+                    }
+                });
+            } else if (endDate >= booking.startDate && endDate <= booking.endDate) {
+                return res.status(403).json({
+                    "message": "Sorry, this spot is already booked for the specified dates",
+                    "errors": {
+                        "endDate": "End date conflicts with an existing booking"
+                    }
+                });
+            };
         };
+
+        //update booking
+        getBookingById.set({
+            startDate,
+            endDate
+        });
+
+        await getBookingById.save();
+
+        res.json(getBookingById);
+
     };
 
     res.status(403).json({ "message": "Only booking creator can edit booking" });
@@ -138,7 +152,7 @@ router.delete('/:bookingId', requireAuth, async (req, res) => {
             });
         }
     };
-    res.status(403).json({"message": "Only spot owner or booking creator can delete booking"});
+    res.status(403).json({ "message": "Only spot owner or booking creator can delete booking" });
 
 });
 

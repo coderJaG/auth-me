@@ -60,6 +60,7 @@ if (!isProduction) {
         errors[error.path] = error.message;
       }
       err.title = 'Validation error';
+      err.status = 400;
       err.errors = errors;
     }
     next(err);
