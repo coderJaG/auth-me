@@ -4,11 +4,48 @@ const router = express.Router();
 const { setTokenCookie, requireAuth } = require('../../utils/auth')
 const { check } = require('express-validator')
 const { handleValidationErrors } = require('../../utils/validation')
+const { Op } = require('sequelize')
+
 const { Spot, Review, User, Image, Booking } = require('../../db/models');
 
 
 
 
+const validateQuery = [
+    check('page')
+        .exists({ checkFalsy: true })
+        .isInt({ min: 1 })
+        .withMessage('Page must be greater than or equal to 1'),
+    check('size')
+        .exists({ checkFalsy: true })
+        .isInt({ min: 1, max: 20 })
+        .withMessage('Size must be between 1 and 20'),
+    check('maxLat')
+        .optional()
+        .isFloat({ min: -90, max: 90 })
+        .withMessage('Maximum latitude is invalid'),
+    check('minLat')
+        .optional()
+        .isFloat({ min: -90, max: 90 })
+        .withMessage('Minimum latitude is invalid'),
+    check('minLng')
+        .optional()
+        .isFloat({ min: -180, max: 180 })
+        .withMessage('Minimum longitude is invalid'),
+    check('maxLng')
+        .optional()
+        .isFloat({ min: -180, max: 180 })
+        .withMessage('Maximum longitude is invalid'),
+    check('minPrice')
+        .optional()
+        .isFloat({ min: 0 })
+        .withMessage('Minimum price must be greater than or equal to 0'),
+    check('maxPrice')
+        .optional()
+        .isFloat({ min: 0 })
+        .withMessage('Maximum price must be greater than or equal to 0'),
+    handleValidationErrors
+]
 //check if spot !exists to be true helper function
 // isNotSpot = (getSpotById) => {
 //     if (!getSpotById) {
@@ -19,9 +56,86 @@ const { Spot, Review, User, Image, Booking } = require('../../db/models');
 // }
 
 //get all spots
-router.get('/', async (req, res) => {
-    const getAllSpots = await Spot.findAll({
+router.get('/', validateQuery, async (req, res, next) => {
 
+    let { page, size, minLat, maxLat, minLng, maxLng, minPrice, maxPrice } = req.query;
+
+    page = parseInt(page);
+    size = parseInt(size);
+    minLat = parseFloat(minLat);
+    maxLat = parseFloat(maxLat);
+    minLng = parseFloat(minLng);
+    maxLng = parseFloat(maxLng);
+    minPrice = parseFloat(minPrice);
+    maxPrice = parseFloat(maxPrice);
+
+    if (Number.isNaN(page) || page <= 0) page = 1;
+    if (Number.isNaN(size) || size <= 0 || size > 20) size = 20;
+
+
+    let where = {};
+
+    //latitude filter
+    if ( !Number.isNaN(minLat) && !Number.isNaN(maxLat)) {
+        where.lat = {
+            [Op.or]: {
+                [Op.lte]: maxLat,
+                [Op.gte]: minLat
+            }
+        }
+    } else if (!Number.isNaN(minLat)) {
+        where.lat = {
+            [Op.gte]: minLat,
+        }
+    } else if (!Number.isNaN(maxLat)) {
+        where.lat = {
+            [Op.lte]: maxLat
+        }
+    };
+
+    //longitude filter
+    if ( !Number.isNaN(minLng) && !Number.isNaN(maxLng)) {
+        where.lng = {
+            [Op.or]: {
+                [Op.lte]: maxLng,
+                [Op.gte]: minLng
+            }
+        }
+    } else if (!Number.isNaN(minLng)) {
+        where.lng = {
+            [Op.gte]: minLng,
+        }
+    } else if (!Number.isNaN(maxLng)) {
+        where.lng = {
+            [Op.lte]: maxLng,
+        }
+    };
+
+   //price filter
+   if ( !Number.isNaN(minPrice) && !Number.isNaN(maxPrice)) {
+    where.price = {
+        [Op.or]: {
+            [Op.lte]: maxPrice,
+            [Op.gte]: minPrice
+        }
+    }
+} else if (!Number.isNaN(minPrice)) {
+    where.price = {
+        [Op.gte]: minPrice,
+    }
+} else if (!Number.isNaN(maxPrice)) {
+    where.price = {
+        [Op.lte]: maxPrice,
+        
+    }
+};
+
+//console.log(where)
+   
+    const getAllSpots = await Spot.findAll({
+        limit: size,
+        offset: parseInt(size * (page - 1)),
+        where,
         include: [{
             model: Review,
             attributes: ['stars'],
@@ -31,8 +145,8 @@ router.get('/', async (req, res) => {
             attributes: ['url', 'preview']
         }
         ]
-    });
 
+    });
     // build spot details
     const result = getAllSpots.map(spot => {
         let avgRating;
@@ -61,7 +175,9 @@ router.get('/', async (req, res) => {
         }
 
     });
-    return res.json({ Spots: result });
+    if(result.length) {return res.json({ Spots: result, page, size });};
+
+    return res.json({"message": 'no results found'});
 
 });
 
@@ -498,4 +614,8 @@ router.post('/:spotId/bookings', requireAuth, async (req, res) => {
 
     res.status(403).json({ "message": "Cannot create booking on your own spot" });
 });
+
+
+
+
 module.exports = router;

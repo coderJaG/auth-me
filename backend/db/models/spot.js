@@ -101,7 +101,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         isValid (value){
-          if (value < -180 || value > 1800){
+          if (value < -180 || value > 180){
             throw new Error('Longitiude must be between -180 and 180')
           }
         }
