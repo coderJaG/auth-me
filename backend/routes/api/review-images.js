@@ -31,7 +31,7 @@ router.delete('/:imageId', requireAuth, async (req, res) => {
         });
     };
 
-    res.status(403).json({"message": "Only Review owner can delete Image"});
+    res.status(403).json({"message": "Forbidden"});
 });
 
 

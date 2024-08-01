@@ -25,6 +25,10 @@ router.get('/current', requireAuth, async (req, res) => {
         ],
     });
 
+    if(!getReviewsById.length){
+        res.json({"message": "no reviews found"})
+    }
+
     //build review results
     let result = getReviewsById.map(review => {
 
@@ -99,7 +103,7 @@ router.post('/:reviewId/images', requireAuth, async (req, res) => {
     //check if current user created review
     if (currentUserId !== reviewUserId) {
         return res.status(403).json({
-            "message": "only review owner can add an image to a review"
+            "message": "Forbidden"
         });
     };
 
@@ -151,7 +155,7 @@ router.put('/:reviewId', requireAuth, async (req, res) => {
     //check if current user created review
     if (currentUserId !== reviewUserId) {
         return res.status(403).json({
-            "message": "only review owner can edit a review"
+            "message": "Forbidden"
         });
     };
 
@@ -186,7 +190,7 @@ router.delete('/:reviewId', requireAuth, async (req, res) => {
     //check if current user created review
     if (currentUserId !== reviewUserId) {
         return res.status(403).json({
-            "message": "only review owner can edit a review"
+            "message": "Forbidden"
         });
     };
 

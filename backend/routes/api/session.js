@@ -14,13 +14,14 @@ const validateLogin = [
     check('credential')
         .exists({ checkFalsy: true })
         .notEmpty()
-        .withMessage('Please provide a valid email or username'),
+        .withMessage('Email or username is required'),
     check('password')
         .exists({ checkFalsy: true })
-        .withMessage('Please provide a password'),
+        .withMessage('Password is required'),
     handleValidationErrors
 ];
 
+//get current user
 router.get('/', (req, res) => {
     const { user } = req;
     if (user) {
@@ -38,6 +39,7 @@ router.get('/', (req, res) => {
 });
 
 
+//login a user
 router.post('/', validateLogin, async (req, res, next) => {
     const { credential, password } = req.body;
 
@@ -51,11 +53,13 @@ router.post('/', validateLogin, async (req, res, next) => {
     });
 
     if (!User || !bcrypt.compareSync(password, user.hashedPassword.toString())) {
-        const err = new Error('Login failed');
-        err.status = 401;
-        err.title = 'Login failed';
-        err.errors = { credential: 'The provided cedentiails were invalid.' }
-        return next(err);
+        // const err = new Error('Login failed');
+        // err.status = 401;
+        //err.title = 'Login failed';
+       // err.errors = { credential: 'The provided cedentiails were invalid.' }
+        return res.status(401).json({
+            "message": "Invalid credentials"
+          });
     }
     const safeUser = {
         id: user.id,

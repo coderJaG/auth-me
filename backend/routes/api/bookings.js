@@ -1,7 +1,7 @@
 const express = require('express');
 
 const { requireAuth } = require('../../utils/auth')
-const { User, Spot, Review, Image, Booking } = require('../../db/models')
+const { User, Spot, Image, Booking } = require('../../db/models')
 
 
 const router = express.Router();
@@ -48,7 +48,8 @@ router.get('/current', requireAuth, async (req, res) => {
         updatedAt: bookingDdata.updatedAt
     };
 
-    return res.json({ Bookings: [booking] });
+   return res.json({ Bookings: [booking] });
+   
 });
 
 
@@ -116,7 +117,7 @@ router.put('/:bookingId', requireAuth, async (req, res) => {
 
     };
 
-    res.status(403).json({ "message": "Only booking creator can edit booking" });
+    res.status(403).json({ "message": "Forbidden" });
 
 });
 
@@ -152,7 +153,7 @@ router.delete('/:bookingId', requireAuth, async (req, res) => {
             });
         }
     };
-    res.status(403).json({ "message": "Only spot owner or booking creator can delete booking" });
+    res.status(403).json({ "message": "Forbidden" });
 
 });
 
