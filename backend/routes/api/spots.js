@@ -491,7 +491,7 @@ router.get('/:spotId/bookings', requireAuth, async (req, res) => {
 
     const bookingsData = getAllBookingsBySpotId[0].toJSON();
     //build results
-    if (currentUserId === bookingsData.User.id) {
+    if (currentUserId !== bookingsData.User.id) {
         const User = bookingsData.User
         delete bookingsData.User
         let result = [{
