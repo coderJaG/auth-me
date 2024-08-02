@@ -110,6 +110,7 @@ router.get('/', /*validateQuery,*/ async (req, res, next) => {
                 avgRating = 'Not yet rated'
             } else {
                 avgRating = (spot.Reviews.reduce((acc, rating) => acc + rating.stars, 0) / spot.Reviews.length).toFixed(1);
+                avgRating = parseFloat(avgRating)
             }
             const previewImage = spot.Images[0].preview ? spot.Images[0].url : 'No image';
 
@@ -289,7 +290,7 @@ router.post('/:spotId/images', requireAuth, async (req, res) => {
         return res.status(201).json(result)
     };
 
-    return res.json({
+    return res.status(403).json({
         "message": "Forbidden"
     });
 });
@@ -352,7 +353,7 @@ router.put('/:spotId', requireAuth, async (req, res) => {
 
         return res.json(getSpotById);
     };
-    return res.json({
+    return res.status(403).json({
         "message": "Forbidden"
     });
 });
@@ -380,7 +381,7 @@ router.delete('/:spotId', requireAuth, async (req, res) => {
             "message": "Successfully deleted"
         });
     }
-    return res.json({
+    return res.status(403).json({
         "message": "Forbidden"
     });
 
