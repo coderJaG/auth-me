@@ -78,7 +78,7 @@ router.put('/:bookingId', requireAuth, async (req, res) => {
 
         //check for booking conflicts;
         for (const booking of getAllBookings) {
-            if (startDate >= booking.startDate && startDate < booking.endDate
+            if (startDate >= booking.startDate && startDate <= booking.endDate
                 && endDate >= booking.startDate && endDate <= booking.endDate
                 || startDate <= booking.startDate && endDate >= booking.endDate) {
                 return res.status(403).json({
@@ -88,7 +88,7 @@ router.put('/:bookingId', requireAuth, async (req, res) => {
                         "endDate": "End date conflicts with an existing booking"
                     }
                 });
-            } else if (startDate >= booking.startDate && startDate < booking.endDate) {
+            } else if (startDate >= booking.startDate && startDate <= booking.endDate) {
                 return res.status(403).json({
                     "message": "Sorry, this spot is already booked for the specified dates",
                     "errors": {
