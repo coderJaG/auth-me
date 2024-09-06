@@ -32,6 +32,7 @@ function LoginFormPage () {
             <label>Username or Email</label>
             <input type="text"
             value={credential}
+            placeholder="Enter your Username or Email"
             onChange={e => setCredential(e.target.value)}
             required
             />
@@ -39,7 +40,9 @@ function LoginFormPage () {
             <label>Password</label>
             <input type="password"
             value={password}
+            autoComplete="current-password"
             onChange={e => setPassword(e.target.value)}
+            placeholder="Enter your password"
             required
             />
             {errors.credential && <p>{errors.credential}</p>}
