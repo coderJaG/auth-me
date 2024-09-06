@@ -42,8 +42,8 @@ function LoginFormPage () {
             onChange={e => setPassword(e.target.value)}
             required
             />
-            
             {errors.credential && <p>{errors.credential}</p>}
+            {errors.password && <p>{errors.password}</p>}
             <button type="submit">Login</button>
 
         </form>
