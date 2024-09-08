@@ -1,25 +1,26 @@
 import { NavLink } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 
-import * as sessionActions from '../../store/session'
 import ProfileButton from "./ProfileButton";
+import './Navigation.css';
 
 
 const Navigation = () => {
-    const dispatch = useDispatch()
+   
     const currUser = useSelector(state => state.session.user)
+
+    const userHomeClass = currUser ? 'user-home' : 'home'
+
     return (
-        <ul>
-            <li> <NavLink to='/'>Home</NavLink></li>
-            {!currUser && <li><NavLink to='/login'>Login</NavLink></li>}
-            {!currUser && <li><NavLink to='/users'>Sign Up</NavLink></li>}
-            {currUser && <li><ProfileButton user={currUser} /></li>}
-            {currUser && <li><button onClick={e => {
-                e.preventDefault();
-                dispatch(sessionActions.logOutCurrUser())
-            }}>Log Out</button></li>}
+        <div className="nav-bar">
+        <ul className="nav-ul">
+            <li className={userHomeClass}> <NavLink to='/'>Home</NavLink></li>
+            {!currUser && <li className="login"><NavLink to='/login'>Login</NavLink></li>}
+            {!currUser && <li className="signup"><NavLink to='/users'>Sign Up</NavLink></li>}
+            {currUser && <li className="profile"><ProfileButton user={currUser} /></li>}
         </ul>
+        </div>
     )
 }
 

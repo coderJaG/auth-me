@@ -1,0 +1,116 @@
+.nav-bar {
+    display: flex;
+    width: 1200px;
+    /* height: 130px; */
+    border-bottom: 1px solid blue;
+    border-top: 1px solid blue;
+    color: red;
+    justify-content: flex-end;
+    margin: auto;
+    padding: 5px;
+}
+
+.nav-bar a,
+ul {
+    text-decoration: none;
+    list-style: none;
+}
+
+
+.nav-bar ul {
+    padding-left: 0;
+    padding-top: 10px;
+    padding-bottom: 5px;
+
+}
+
+
+.nav-ul {
+    display: grid;
+    border: 1px solid black;
+    border-radius: 30px;
+    grid-template-columns: 1fr, 2fr;
+    grid-template-areas:
+        'home profile'
+        'login profile-dropdown'
+        'signup profile-dropdown';
+    padding-right: 10px;
+}
+/* when no user is logged in */
+.home {
+    grid-area: home;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+/* when user is logged in */
+.user-home {
+    grid-area: home;
+    line-height: 37px;
+    /* margin-bottom: 5px; */
+    text-align: right;
+}
+
+.login {
+    grid-area: login;
+    margin-bottom: 5px;
+    /* margin-right: 20px; */
+    text-align: center;
+}
+
+.signup {
+    grid-area: signup;
+    margin-bottom: 5px;
+    /* margin-right: 20px; */
+    text-align: center;
+}
+
+.profile {
+    display: flex;
+    grid-area: profile;
+    flex-direction: column;
+    justify-content: flex-start;
+    /* width: 115px; */
+}
+
+
+.nav-ul li {
+
+    padding-left: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* .profile-dropdown {
+    display: none;
+} */
+
+
+
+.profile-btn {
+    border: none;
+    border-radius: 50px;
+    width: 35px;
+    height: 35px;
+    padding: 2px;
+    background-color: blue;
+
+}
+
+.profile-icon {
+    color: white;
+    font-size: 30px;
+    margin: auto;
+    text-align: center;
+}
+
+/* .profile-dropdown.hidden {
+    display: none !important;
+} */
+
+
+.logout-btn {
+    margin-top: 5px;
+}
