@@ -1,4 +1,4 @@
-import { createBrowserRouter, Outlet, Route, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 
