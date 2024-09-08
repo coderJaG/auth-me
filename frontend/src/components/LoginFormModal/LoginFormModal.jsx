@@ -26,23 +26,18 @@ function LoginFormModal () {
         <h1 className="login-form-heading">Log In</h1>
 
         <form className='login-form' onSubmit={handleSubmit}>
-            <label>Username or Email</label>
+            <label>Username or Email *</label>
             <input type="text"
             value={credential}
-            placeholder="Enter your Username or Email"
             onChange={e => setCredential(e.target.value)}
-            required
             />
-            
-            <label>Password</label>
+            {errors.credential && <p>{errors.credential}</p>}
+            <label>Password *</label>
             <input type="password"
             value={password}
             autoComplete="current-password"
-            onChange={e => setPassword(e.target.value)}
-            placeholder="Enter your password"
-            required
+            onChange={e => setPassword(e.target.value)}  
             />
-            {errors.credential && <p>{errors.credential}</p>}
             {errors.password && <p>{errors.password}</p>}
             <button type="submit">Login</button>
 

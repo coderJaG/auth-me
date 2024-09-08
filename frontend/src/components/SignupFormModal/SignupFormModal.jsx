@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import {useDispatch } from 'react-redux';
+import { useModal } from '../context/Modal';
 import * as sessionActions from '../../store/session'
-import { Navigate } from 'react-router-dom';
 
-const SignupFormPage = () => {
+const SignupFormModal = () => {
     const dispatch = useDispatch()
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -11,10 +11,9 @@ const SignupFormPage = () => {
     const [username, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [errors, setErrors] = useState({})
+    const [errors, setErrors] = useState({});
+    const { closeModal } = useModal();
 
-
-    const sessionUser = useSelector(state => state.session.user)
 
 
     // Password matching control
@@ -28,18 +27,19 @@ const SignupFormPage = () => {
         setErrors(passwordMatchErr);
     }, [password, confirmPassword]);
 
-    if (sessionUser) return <Navigate to='/' replace={true} />
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-
+       
         if (confirmPassword !== password) {
             setErrors({ ...errors, confirmPassword: 'Passwords do not match' });
             return;
         }
 
         try {
-            await dispatch(sessionActions.signup({ firstName, lastName, email, username, password }));
+            await dispatch(sessionActions.signup({ firstName, lastName, email, username, password }))
+            .then(closeModal);
             setErrors({});
         } catch (res) {
             const data = await res.json();
@@ -111,4 +111,4 @@ const SignupFormPage = () => {
 
 
 
-export default SignupFormPage;
+export default SignupFormModal;
