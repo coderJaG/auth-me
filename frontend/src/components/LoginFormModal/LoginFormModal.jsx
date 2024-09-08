@@ -1,17 +1,14 @@
 import { useState} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {Navigate} from 'react-router-dom';
+import { useDispatch} from "react-redux";
 import * as sessionActions from '../../store/session';
-import './LoginFormPage.css';
+import './LoginFormModal.css';
 
-function LoginFormPage () {
+function LoginFormModal () {
     const dispatch = useDispatch();
-    const sessionUser = useSelector(state =>  state.session.user)
     const [credential, setCredential] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({});
 
-    if (sessionUser) return <Navigate to="/" replace={true} />;
 
    const handleSubmit = (e) => {
     e.preventDefault();
@@ -54,4 +51,4 @@ function LoginFormPage () {
     )
 }
 
-export default LoginFormPage;
+export default LoginFormModal;

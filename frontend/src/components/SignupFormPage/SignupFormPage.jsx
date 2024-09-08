@@ -49,7 +49,7 @@ const SignupFormPage = () => {
         }
     };
 
-    const ifErrors = Object.values(errors).length > 0
+    //const ifErrors = Object.values(errors).length > 0
 
     return (
 
