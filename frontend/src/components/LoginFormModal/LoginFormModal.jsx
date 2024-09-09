@@ -1,6 +1,7 @@
 import { useState} from "react";
 import { useDispatch} from "react-redux";
 import * as sessionActions from '../../store/session';
+import { useModal } from "../context/Modal";
 import './LoginFormModal.css';
 
 function LoginFormModal () {
@@ -8,12 +9,14 @@ function LoginFormModal () {
     const [credential, setCredential] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({});
-
+    const { closeModal } = useModal();
 
    const handleSubmit = (e) => {
     e.preventDefault();
     setErrors({});
-    return dispatch(sessionActions.login({ credential, password })).catch(
+    return dispatch(sessionActions.login({ credential, password }))
+    .then(closeModal)
+    .catch(
       async (res) => {
         const data = await res.json();
         if (data?.errors) setErrors(data.errors);
@@ -21,6 +24,7 @@ function LoginFormModal () {
     );
   };
 
+  const disableButton  = (credential.length >=4 && password.length >=6) ? false : true
     return (
         <>
         <h1 className="login-form-heading">Log In</h1>
@@ -39,7 +43,7 @@ function LoginFormModal () {
             onChange={e => setPassword(e.target.value)}  
             />
             {errors.password && <p>{errors.password}</p>}
-            <button type="submit">Login</button>
+            <button type="submit" disabled={disableButton}>Login</button>
 
         </form>
         </>

@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 
 import * as sessionActions from './store/session';
 import Navigation from "./components/Navigation";
+import GetAllSpots from "./components/GetAllSpots";
+import SpotDetails from "./components/SpotDetails";
 
 
 
@@ -30,7 +32,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <h1>Welcome</h1>
+        element: <GetAllSpots />
+      },
+      {
+        path: '/spots/:spotId',
+        element: <SpotDetails />
       }
     ]
   }

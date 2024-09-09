@@ -173,6 +173,7 @@ router.get('/', async (req, res, next) => {
                 ownerId: spot.ownerId,
                 address: spot.address,
                 city: spot.city,
+                state: spot.state,
                 country: spot.country,
                 lat: spot.lat,
                 lng: spot.lng,

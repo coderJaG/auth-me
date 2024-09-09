@@ -15,6 +15,7 @@ const Navigation = () => {
     const userHomeClass = currUser ? 'user-home' : 'home'
 
     return (
+        <>
         <div className="nav-bar">
             <ul className="nav-ul">
                 <li className={userHomeClass}> <NavLink to='/'>Home</NavLink></li>
@@ -30,7 +31,10 @@ const Navigation = () => {
                 </li>}
                 {currUser && <li className="profile"><ProfileButton user={currUser} /></li>}
             </ul>
+            
         </div>
+        <hr/>
+        </>
     )
 }
 

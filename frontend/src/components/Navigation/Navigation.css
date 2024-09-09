@@ -1,9 +1,6 @@
 .nav-bar {
     display: flex;
     width: 1200px;
-    /* height: 130px; */
-    border-bottom: 1px solid blue;
-    border-top: 1px solid blue;
     color: red;
     justify-content: flex-end;
     margin: auto;
@@ -83,12 +80,6 @@ ul {
     display: none;
 }
 
-/* .profile-dropdown {
-    display: none;
-} */
-
-
-
 .profile-btn {
     border: none;
     border-radius: 50px;
@@ -105,11 +96,6 @@ ul {
     margin: auto;
     text-align: center;
 }
-
-/* .profile-dropdown.hidden {
-    display: none !important;
-} */
-
 
 .logout-btn {
     margin-top: 5px;
