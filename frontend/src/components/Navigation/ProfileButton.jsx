@@ -1,5 +1,6 @@
 import { useDispatch } from "react-redux";
 import { useEffect, useState, useRef } from "react";
+import { Link } from "react-router-dom";
 import { ImCool2 } from "react-icons/im";
 import * as sessionActions from '../../store/session';
 
@@ -52,6 +53,7 @@ const ProfileButton = ({ user }) => {
                 <li>{user.username}</li>
                 <li>{user.firstName} {user.lastName} </li>
                 <li>{user.email}</li>
+                <li><Link>Manage Spots</Link></li>
                 {user && <li><button className='logout-btn' onClick={logout}>Log Out</button></li>}
             </ul>
         </>

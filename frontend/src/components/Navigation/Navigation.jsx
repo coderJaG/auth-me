@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 import OpenModalButton from '../OpenModalButton';
@@ -17,6 +17,8 @@ const Navigation = () => {
     return (
         <>
         <div className="nav-bar">
+        
+         {currUser &&<div><Link>Create a New Spot</Link></div>}
             <ul className="nav-ul">
                 <li className={userHomeClass}> <NavLink to='/'>Home</NavLink></li>
                 {!currUser && <li className="login"><OpenModalButton
