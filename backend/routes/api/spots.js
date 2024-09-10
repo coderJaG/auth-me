@@ -118,13 +118,18 @@ router.get('/', async (req, res, next) => {
                 avgRating = (spot.Reviews.reduce((acc, rating) => acc + rating.stars, 0) / spot.Reviews.length).toFixed(1);
                 avgRating = parseFloat(avgRating)
             }
-            const previewImage = spot.Images[0].preview ? spot.Images[0].url : 'No image';
+            const previewImage = spot.Images && spot.Images.length > 0
+                ? spot.Images[0].preview
+                    ? spot.Images[0].url
+                    : 'No image'
+                : 'No image';
 
             return {
                 id: spot.id,
                 ownerId: spot.ownerId,
                 address: spot.address,
                 city: spot.city,
+                state: spot.state,
                 country: spot.country,
                 lat: spot.lat,
                 lng: spot.lng,
@@ -166,7 +171,12 @@ router.get('/', async (req, res, next) => {
                 avgRating = (spot.Reviews.reduce((acc, rating) => acc + rating.stars, 0) / spot.Reviews.length).toFixed(1);
                 avgRating = parseFloat(avgRating)
             }
-            const previewImage = spot.Images[0].preview ? spot.Images[0].url : 'No image';
+           // console.log('this is test', spot.Images[0].preview)
+            const previewImage = spot.Images && spot.Images.length > 0
+                ? spot.Images[0].preview
+                    ? spot.Images[0].url
+                    : 'No image'
+                : 'No image';
 
             return {
                 id: spot.id,
@@ -286,6 +296,7 @@ router.get('/:spotId', async (req, res) => {
             ownerId: spotParts.ownerId,
             address: spotParts.address,
             city: spotParts.city,
+            state: spotParts.state,
             country: spotParts.country,
             lat: spotParts.lat,
             lng: spotParts.lng,

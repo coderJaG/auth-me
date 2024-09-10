@@ -21,10 +21,20 @@ const SpotDetails = () => {
     }
   
     return (
+    <>
       <div>
         <h2>{spot.name}</h2>
-        {/* ... display other spot details */}
+        <p>{spot.city}, {spot.state}, {spot.country}</p>
       </div>
+      <div>Images Div</div>
+      <h1>Hosted by {spot.Owner.firstName} {spot.Owner.lastName}</h1>
+      <p>{spot.description}</p>
+      <div><span>${spot.price} night</span> <br />
+      <span>stars {spot.avgStarRating}</span> <br />
+      <span>{spot.numReviews} reviews</span>
+      <button>Reserve</button>
+      </div>
+      </>
     );
   }
   

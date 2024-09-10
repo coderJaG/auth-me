@@ -18,7 +18,7 @@ const Navigation = () => {
         <>
         <div className="nav-bar">
         
-         {currUser &&<div><Link>Create a New Spot</Link></div>}
+         {currUser &&<div><Link to='/spots'>Create a New Spot</Link></div>}
             <ul className="nav-ul">
                 <li className={userHomeClass}> <NavLink to='/'>Home</NavLink></li>
                 {!currUser && <li className="login"><OpenModalButton
