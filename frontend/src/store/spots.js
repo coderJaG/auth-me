@@ -5,6 +5,7 @@ import { csrfFetch } from "./csrf";
 const GET_ALL_SPOTS = 'spots/getAllSpots';
 const GET_SPOT_BY_ID = 'spots/getSpotById'
 const CREATE_NEW_SPOT = 'spots/createNewSpot'
+const GET_ALL_SPOT_REVIEWS = 'reviews/getAllSpotReviews';
 
 
 const getAllSpots = (spots) => {
@@ -16,7 +17,6 @@ const getAllSpots = (spots) => {
 
 
 const getSpotById = (spot) => {
-    console.log('twotesters', spot);
     return ({
         type: GET_SPOT_BY_ID,
         payload: spot
@@ -28,10 +28,15 @@ const createNewSpot = (spot)=> ({
     payload: spot
 })
 
+const getSpotReviews = (reviews) => {
+    return ({
+    type: GET_ALL_SPOT_REVIEWS,
+    payload: reviews
+})};
+
 export const spots = () => async (dispatch) => {
     const res = await fetch('/api/spots');
     const data = await res.json();
-    console.log(data)
     dispatch(getAllSpots(data.Spots));
     return res;
 }
@@ -39,7 +44,7 @@ export const spots = () => async (dispatch) => {
 export const spotDetails = (spotId) => async (dispatch) => {
     const res = await fetch(`/api/spots/${spotId}`);
     const data = await res.json();
-    dispatch(getSpotById(data[0]))
+    dispatch(getSpotById(data[0]));
     return res;
 }
 
@@ -61,10 +66,16 @@ export const newSpot = (spotData) => async (dispatch) => {
         })
     })
     const data = await res.json();
-    console.log('creatingggg', data)
-    dispatch(createNewSpot(data))
+    dispatch(createNewSpot(data));
 }
 
+export const getReviewsForSpot = (spotId) => async (dispatch)=>{
+    const res = await csrfFetch(`/api/spots/${spotId}/reviews`);
+    const data = await res.json();
+    console.log('reviwwwe', data)
+    dispatch(getSpotReviews(data));
+    return res;
+}
 const initialState = {}
 const spotsReducer = (state = initialState, action) => {
     switch (action.type) {
@@ -72,15 +83,18 @@ const spotsReducer = (state = initialState, action) => {
             return { ...state, spots: action.payload }
         }
         case GET_SPOT_BY_ID: {
-            console.log('testing')
             const newState = { ...state }
             newState.spot = action.payload
             return newState
         }
         case CREATE_NEW_SPOT: {
-            console.log('testing' ,action.payload)
             const newState = { ...state }
             newState.spot = action.payload
+            return newState
+        }
+        case GET_ALL_SPOT_REVIEWS: {
+            const newState = {...state}
+            newState.reviews = action.payload.Reviews
             return newState
         }
         default:

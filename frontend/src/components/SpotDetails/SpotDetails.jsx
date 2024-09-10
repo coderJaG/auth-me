@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 
 import {spotDetails} from '../../store/spots';
+import Reviews from "../Reviews";
 
 
 
@@ -33,6 +34,7 @@ const SpotDetails = () => {
       <span>stars {spot.avgStarRating}</span> <br />
       <span>{spot.numReviews} reviews</span>
       <button>Reserve</button>
+      <Reviews />
       </div>
       </>
     );
