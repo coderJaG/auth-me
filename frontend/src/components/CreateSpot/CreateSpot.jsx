@@ -5,6 +5,7 @@ import { newSpot } from "../../store/spots";
 
 
 
+
 const CreateSpot = () => {
     const currUser = useSelector(state => state.session.user);
     const dispatch = useDispatch();
@@ -20,22 +21,46 @@ const CreateSpot = () => {
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
     const [errors, setErrors] = useState({});
+    const [images, setImages] = useState([]);
+    const [preview, setPreview] = useState(true)
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        try {
-            dispatch(newSpot({ address, city, state, country, lat, lng, name, description, price }))
-        }
-        catch (res) {
-            const data = await res.json();
-            if (data?.errors) {
-                setErrors(data.errors);
+        const newSpotData = {
+            address,
+            city,
+            state,
+            country,
+            lat,
+            lng,
+            name,
+            description,
+            price,
+            images,
+            preview
 
-            }
         }
+
+        // try {
+        //     dispatch(newSpot(newSpotData))
+        // }
+        // catch (res) {
+        //     const data = await res.json();
+        //     if (data?.errors) {
+        //         setErrors(data.errors);
+
+        //     }
+        // }
+        return dispatch(newSpot(newSpotData))
+        .catch(
+          async (res) => {
+            const data = await res.json();
+            if (data?.errors) setErrors(data.errors);
+          }
+        );
     }
-    console.log(errors)
+
     return (
         <>
             <h1>Create A Spot</h1>
@@ -93,7 +118,7 @@ const CreateSpot = () => {
                 {errors.lng && <p>{errors.lng}</p>}
                 <label><h3>Create a title for your spot</h3>
                     <p>Catch guests' attention with a spot title that highlights what makes
-                    your place special.
+                        your place special.
                     </p></label>
                 <input
                     type="text"
@@ -110,13 +135,13 @@ const CreateSpot = () => {
                 <textarea
                     value={description}
                     onChange={e => setDescription(e.target.value)}
-                    placeholder="Please write at least 30 characters">                       
-                    </textarea>
+                    placeholder="Please write at least 30 characters">
+                </textarea>
                 {errors.description && <p>{errors.description}</p>}
                 <label><h3>Set a base price for your spot</h3>
                     <p>Competitive pricing can help your listing stand out and rank higher
-                    in search results</p>
-                    </label>
+                        in search results</p>
+                </label>
                 <input
                     type="number"
                     value={price}
@@ -124,6 +149,22 @@ const CreateSpot = () => {
                     placeholder="Price per night (USD)"
                 />
                 {errors.price && <p>{errors.price}</p>}
+                <section>
+                    <p>Liven up your spot with photos</p>
+                    <p>Submit at least on photo to publish your spot</p>
+                    <input
+                    type="url"
+                    value={images}
+                    onChange={e=> setImages([...images, e.target.value])}
+                    placeholder="Preview image url"
+                    />
+                    <input
+                    type="url"
+                    value={images}
+                    onChange={e=> setImages([...images, e.target.value])}
+                    placeholder="Image url"
+                    />
+                </section>
                 <button type="submit">Create Spot</button>
             </form>
         </>

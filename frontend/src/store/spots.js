@@ -7,6 +7,7 @@ const GET_SPOT_BY_ID = 'spots/getSpotById'
 const CREATE_NEW_SPOT = 'spots/createNewSpot'
 const GET_ALL_SPOT_REVIEWS = 'spots/getAllSpotReviews';
 const CREATE_REVIEW = 'spots/createReview'
+const ADD_IMAGE = 'spots/addImage'
 
 
 const getAllSpots = (spots) => {
@@ -40,6 +41,11 @@ const createReview = (review) => ({
     payload: review
 })
 
+const addImage = (image) => ({
+    type: ADD_IMAGE,
+    payload: image
+})
+
 export const spots = () => async (dispatch) => {
     const res = await fetch('/api/spots');
     const data = await res.json();
@@ -55,10 +61,9 @@ export const spotDetails = (spotId) => async (dispatch) => {
 }
 
 export const newSpot = (spotData) => async (dispatch) => {
-    const { address, city, state, country, lat, lng, name, description, price } = spotData
+    const { address, city, state, country, lat, lng, name, description, price, images, preview } = spotData
     let res = await csrfFetch('/api/spots', {
         method: 'POST',
-        header: 'application/json',
         body: JSON.stringify({
             address,
             city,
@@ -71,8 +76,17 @@ export const newSpot = (spotData) => async (dispatch) => {
             price,
         })
     })
-    const data = await res.json();
-    dispatch(createNewSpot(data));
+    res = await res.json();
+    dispatch(createNewSpot(res));
+    for await (let image of images) {
+        let imageRes = await csrfFetch(`/api/spots/${res.id}/images`, {
+            method: 'POST',
+            body: JSON.stringify({url: image, preview})
+        })
+        const imageData = await imageRes.json()
+        dispatch(addImage(imageData))
+    }
+    return res
 }
 
 export const getReviewsForSpot = (spotId) => async (dispatch)=>{
@@ -85,7 +99,6 @@ export const getReviewsForSpot = (spotId) => async (dispatch)=>{
 
 
 export const createNewReview = (reviewData, spotId) => async (dispatch) => {
-    console.log('it is hitting this block',)
     const {review, stars} = reviewData;
     const res = await csrfFetch(`/api/spots/${spotId}/reviews`, {
         method: 'POST',
@@ -126,6 +139,10 @@ const spotsReducer = (state = initialState, action) => {
             const newState = {...state}
             newState.reviews.push(action.payload)
             return newState;
+        }
+        case ADD_IMAGE : {
+            const newState = {...state}
+            newState.images = action.payload
         }
         default:
             return state
