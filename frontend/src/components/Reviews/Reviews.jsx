@@ -2,7 +2,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-
+import OpenModalButton from "../OpenModalButton";
+import ReviewFormModal from "../ReviewFormModal";
 import { getReviewsForSpot } from "../../store/spots";
 import  './Reviews.css'
 
@@ -16,6 +17,7 @@ const Reviews = () => {
     const {spotId} = useParams();
     const [errors, setErrors] = useState({})
     
+   
     useEffect(()=>{
         dispatch(getReviewsForSpot(spotId));
     },[dispatch, spotId]);
@@ -26,20 +28,24 @@ const Reviews = () => {
     for (const rev in reviews) {
         
         reviews[rev].User.id === currUser.id ? userDidReview = true : userDidReview = false
+
+
     }
 
     const showHideButton= authorized || userDidReview ? 'hidden' : '';
 
-    console.log(showHideButton, 'this is button')
     const monthNames = [
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'  
       ];
-console.log(userDidReview, authorized)
+
     return(
         <>
         <h1>Reviews</h1>
-        <button className={showHideButton}>Post Your Review</button>
+        <span className={showHideButton}> <OpenModalButton 
+        buttonText='Post your review'
+        modalComponent={<ReviewFormModal spotId ={spotId}/>} />
+        </span>
         {
             reviews && reviews.map(review=> (
                <div key={review.id}> 

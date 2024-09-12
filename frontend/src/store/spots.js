@@ -5,7 +5,8 @@ import { csrfFetch } from "./csrf";
 const GET_ALL_SPOTS = 'spots/getAllSpots';
 const GET_SPOT_BY_ID = 'spots/getSpotById'
 const CREATE_NEW_SPOT = 'spots/createNewSpot'
-const GET_ALL_SPOT_REVIEWS = 'reviews/getAllSpotReviews';
+const GET_ALL_SPOT_REVIEWS = 'spots/getAllSpotReviews';
+const CREATE_REVIEW = 'spots/createReview'
 
 
 const getAllSpots = (spots) => {
@@ -33,6 +34,11 @@ const getSpotReviews = (reviews) => {
     type: GET_ALL_SPOT_REVIEWS,
     payload: reviews
 })};
+
+const createReview = (review) => ({
+    type: CREATE_REVIEW,
+    payload: review
+})
 
 export const spots = () => async (dispatch) => {
     const res = await fetch('/api/spots');
@@ -72,10 +78,29 @@ export const newSpot = (spotData) => async (dispatch) => {
 export const getReviewsForSpot = (spotId) => async (dispatch)=>{
     const res = await csrfFetch(`/api/spots/${spotId}/reviews`);
     const data = await res.json();
-    console.log('reviwwwe', data)
+   
     dispatch(getSpotReviews(data));
     return res;
 }
+
+
+export const createNewReview = (reviewData, spotId) => async (dispatch) => {
+    console.log('it is hitting this block',)
+    const {review, stars} = reviewData;
+    const res = await csrfFetch(`/api/spots/${spotId}/reviews`, {
+        method: 'POST',
+        body: JSON.stringify({
+            review,
+            stars
+        })
+    });
+    const data = await res.json()
+    dispatch(createReview(data))
+    return data;
+}
+
+
+
 const initialState = {}
 const spotsReducer = (state = initialState, action) => {
     switch (action.type) {
@@ -96,6 +121,11 @@ const spotsReducer = (state = initialState, action) => {
             const newState = {...state}
             newState.reviews = action.payload.Reviews
             return newState
+        }
+        case CREATE_REVIEW: {
+            const newState = {...state}
+            newState.reviews.push(action.payload)
+            return newState;
         }
         default:
             return state
