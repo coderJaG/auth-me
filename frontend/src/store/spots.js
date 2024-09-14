@@ -25,16 +25,17 @@ const getSpotById = (spot) => {
     })
 }
 
-const createNewSpot = (spot)=> ({
+const createNewSpot = (spot) => ({
     type: CREATE_NEW_SPOT,
     payload: spot
 })
 
 const getSpotReviews = (reviews) => {
     return ({
-    type: GET_ALL_SPOT_REVIEWS,
-    payload: reviews
-})};
+        type: GET_ALL_SPOT_REVIEWS,
+        payload: reviews
+    })
+};
 
 const createReview = (review) => ({
     type: CREATE_REVIEW,
@@ -78,10 +79,11 @@ export const newSpot = (spotData) => async (dispatch) => {
     })
     res = await res.json();
     dispatch(createNewSpot(res));
-    for await (let image of images) {
+    const filteredImages = images.filter(image => image.trim() != '')
+    for await (let image of filteredImages) {
         let imageRes = await csrfFetch(`/api/spots/${res.id}/images`, {
             method: 'POST',
-            body: JSON.stringify({url: image, preview})
+            body: JSON.stringify({ url: image, preview })
         })
         const imageData = await imageRes.json()
         dispatch(addImage(imageData))
@@ -89,17 +91,17 @@ export const newSpot = (spotData) => async (dispatch) => {
     return res
 }
 
-export const getReviewsForSpot = (spotId) => async (dispatch)=>{
+export const getReviewsForSpot = (spotId) => async (dispatch) => {
     const res = await csrfFetch(`/api/spots/${spotId}/reviews`);
     const data = await res.json();
-   
+
     dispatch(getSpotReviews(data));
     return res;
 }
 
 
 export const createNewReview = (reviewData, spotId) => async (dispatch) => {
-    const {review, stars} = reviewData;
+    const { review, stars } = reviewData;
     const res = await csrfFetch(`/api/spots/${spotId}/reviews`, {
         method: 'POST',
         body: JSON.stringify({
@@ -131,18 +133,19 @@ const spotsReducer = (state = initialState, action) => {
             return newState
         }
         case GET_ALL_SPOT_REVIEWS: {
-            const newState = {...state}
+            const newState = { ...state }
             newState.reviews = action.payload.Reviews
             return newState
         }
         case CREATE_REVIEW: {
-            const newState = {...state}
+            const newState = { ...state }
             newState.reviews.push(action.payload)
             return newState;
         }
-        case ADD_IMAGE : {
-            const newState = {...state}
-            newState.images = action.payload
+        case ADD_IMAGE: {
+                const newState = { ...state }
+                newState.images = action.payload
+                return newState
         }
         default:
             return state

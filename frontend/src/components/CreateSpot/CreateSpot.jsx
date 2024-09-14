@@ -21,8 +21,17 @@ const CreateSpot = () => {
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
     const [errors, setErrors] = useState({});
-    const [images, setImages] = useState([]);
+    const [images, setImages] = useState(['', '', '', '']);
     const [preview, setPreview] = useState(true)
+
+
+
+
+    const handleImageChange = (i, e) => {
+        const newImages = [...images];
+        newImages[i] = e.target.value;
+        setImages(newImages);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -41,24 +50,32 @@ const CreateSpot = () => {
             preview
 
         }
+        
+        const newErrors = {}; // Object to accumulate errors
 
-        // try {
-        //     dispatch(newSpot(newSpotData))
-        // }
-        // catch (res) {
-        //     const data = await res.json();
-        //     if (data?.errors) {
-        //         setErrors(data.errors);
+        if (!images.some(image => image.trim() !== '')) { // Check if at least one image has a value
+            newErrors.images = 'Please enter at least one image url';
+        }
+    
+        images.forEach((image, index) => {
+            if (image.trim() !== '' && !image.trim().endsWith('.jpg')) {
+                newErrors.jpg = 'URL must end with .jpg';
+            }
+        });
+    
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return; // Prevent submission if there are errors
+        }
+    console.log(newErrors)
 
-        //     }
-        // }
         return dispatch(newSpot(newSpotData))
-        .catch(
-          async (res) => {
-            const data = await res.json();
-            if (data?.errors) setErrors(data.errors);
-          }
-        );
+            .catch(
+                async (res) => {
+                    const data = await res.json();
+                    if (data?.errors) setErrors(data.errors);
+                }
+            );
     }
 
     return (
@@ -153,18 +170,33 @@ const CreateSpot = () => {
                     <p>Liven up your spot with photos</p>
                     <p>Submit at least on photo to publish your spot</p>
                     <input
-                    type="url"
-                    value={images}
-                    onChange={e=> setImages([...images, e.target.value])}
-                    placeholder="Preview image url"
+                        type="url"
+                        value={images[0]}
+                        onChange={e => handleImageChange(0, e)}
+                        placeholder="Preview image url"
                     />
                     <input
-                    type="url"
-                    value={images}
-                    onChange={e=> setImages([...images, e.target.value])}
-                    placeholder="Image url"
+                        type="url"
+                        value={images[1]}
+                        onChange={e => handleImageChange(1, e)}
+                        placeholder="Image url"
                     />
+                    <input
+                        type="url"
+                        value={images[2]}
+                        onChange={e => handleImageChange(2, e)}
+                        placeholder="Image url"
+                    />
+                    <input
+                        type="url"
+                        value={images[3]}
+                        onChange={e => handleImageChange(3, e)}
+                        placeholder="Image url"
+                    />
+
                 </section>
+                {errors.images && <p>{errors.images}</p>}
+                {errors.jpg && <p>{errors.jpg}</p>}
                 <button type="submit">Create Spot</button>
             </form>
         </>
