@@ -2,14 +2,14 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { newSpot } from "../../store/spots";
-
+import { useNavigate } from "react-router-dom";
 
 
 
 const CreateSpot = () => {
     const currUser = useSelector(state => state.session.user);
     const dispatch = useDispatch();
-    //const spotData = useSelector
+    const navigate = useNavigate()
 
     const [address, setAddress] = useState('');
     const [city, setCity] = useState('');
@@ -24,7 +24,7 @@ const CreateSpot = () => {
     const [images, setImages] = useState(['', '', '', '']);
     const [preview, setPreview] = useState(true)
 
-
+    const createdSpot = useSelector(state => state.spots.spot)
 
 
     const handleImageChange = (i, e) => {
@@ -50,26 +50,29 @@ const CreateSpot = () => {
             preview
 
         }
-        
-        const newErrors = {}; // Object to accumulate errors
 
-        if (!images.some(image => image.trim() !== '')) { // Check if at least one image has a value
-            newErrors.images = 'Please enter at least one image url';
+        const newErrors = {};
+
+        if (images[0].trim() === '') {
+            newErrors.images = 'Preview image is required';
         }
-    
+
         images.forEach((image, index) => {
-            if (image.trim() !== '' && !image.trim().endsWith('.jpg')) {
-                newErrors.jpg = 'URL must end with .jpg';
+            const imageExt = ['.jpg', '.png', '.jpeg']
+            if (image.trim() !== '' &&
+                !imageExt.some(ext => image.trim().endsWith(ext))) {
+                newErrors.jpg = 'URL must end with .jpg, .jpeg or .png';
             }
         });
-    
+
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
-            return; // Prevent submission if there are errors
+            return;
         }
-    console.log(newErrors)
+
 
         return dispatch(newSpot(newSpotData))
+            .then(res => { navigate(`/spots/${res.id}`) })
             .catch(
                 async (res) => {
                     const data = await res.json();
@@ -175,28 +178,32 @@ const CreateSpot = () => {
                         onChange={e => handleImageChange(0, e)}
                         placeholder="Preview image url"
                     />
+                    {errors.images && <p>{errors.images}</p>}
+                    {(images[0] && errors.jpg) && <p>{errors.jpg}</p>}
                     <input
                         type="url"
                         value={images[1]}
                         onChange={e => handleImageChange(1, e)}
                         placeholder="Image url"
                     />
+                    {(images[1] && errors.jpg) && <p>{errors.jpg}</p>}
                     <input
                         type="url"
                         value={images[2]}
                         onChange={e => handleImageChange(2, e)}
                         placeholder="Image url"
                     />
+                    {(images[2] && errors.jpg) && <p>{errors.jpg}</p>}
                     <input
                         type="url"
                         value={images[3]}
                         onChange={e => handleImageChange(3, e)}
                         placeholder="Image url"
                     />
-
+                    {(images[3] && errors.jpg) && <p>{errors.jpg}</p>}
                 </section>
-                {errors.images && <p>{errors.images}</p>}
-                {errors.jpg && <p>{errors.jpg}</p>}
+
+
                 <button type="submit">Create Spot</button>
             </form>
         </>

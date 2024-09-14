@@ -124,8 +124,8 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         isValid(value){
-          if(!value){
-            throw new Error('Description is required')
+          if(value.length < 30){
+            throw new Error('Description needs a minimum of 30 characters')
           }
          }
       }
