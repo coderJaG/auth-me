@@ -1,12 +1,13 @@
 import { useDispatch } from "react-redux";
 import { useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ImCool2 } from "react-icons/im";
 import * as sessionActions from '../../store/session';
 
 
 const ProfileButton = ({ user }) => {
     const dispatch = useDispatch();
+    const navigate  = useNavigate();
     const [showMenu, setShowMenu] = useState(false);
     const ulRef = useRef();
 
@@ -34,6 +35,7 @@ const ProfileButton = ({ user }) => {
         e.preventDefault();
         return (
             dispatch(sessionActions.logOutCurrUser())
+            .then(()=> navigate('/'))
         );
     };
 
@@ -53,7 +55,7 @@ const ProfileButton = ({ user }) => {
                 <li>{user.username}</li>
                 <li>{user.firstName} {user.lastName} </li>
                 <li>{user.email}</li>
-                <li><Link>Manage Spots</Link></li>
+                <li><Link to={'/spots/current'}>Manage Spots</Link></li>
                 {user && <li><button className='logout-btn' onClick={logout}>Log Out</button></li>}
             </ul>
         </>

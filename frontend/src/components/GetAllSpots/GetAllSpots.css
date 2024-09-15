@@ -6,10 +6,10 @@ h1 {
 
 .spots-container {
     display: flex;
-    flex-flow: row-reverse wrap;
+    flex-flow: row wrap;
     gap: 10px;
-    margin-right: 30px;
-    width: 1200px;
+    margin: auto;
+    width: 1024px;
     margin: auto;
 
 }
@@ -20,7 +20,7 @@ h1 {
     border-radius: 10px;
     box-sizing: border-box;
     color: red;
-    flex:0 0 20%;
+    flex:0 0 24%;
     padding: 5px;
    
 }

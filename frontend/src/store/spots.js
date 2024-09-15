@@ -47,6 +47,10 @@ const addImage = (image) => ({
     payload: image
 })
 
+export const clearSpotDetails = ()=> {
+    state.spots.spot = null
+}
+
 export const spots = () => async (dispatch) => {
     const res = await fetch('/api/spots');
     const data = await res.json();
@@ -114,6 +118,35 @@ export const createNewReview = (reviewData, spotId) => async (dispatch) => {
     return data;
 }
 
+export const editSpot = (spotData, spotId) => async (dispatch) => {
+    const { address, city, state, country, lat, lng, name, description, price, images, preview } = spotData
+    let res = await csrfFetch(`/api/spots/${spotId}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+            address,
+            city,
+            state,
+            country,
+            lat,
+            lng,
+            name,
+            description,
+            price,
+        })
+    })
+    res = await res.json();
+    dispatch(createNewSpot(res));
+    const filteredImages = images.filter(image => image.trim() !== '')
+    for await (let image of filteredImages) {
+        let imageRes = await csrfFetch(`/api/spots/${res.id}/images/${image.id}`, {
+            method: 'PUT',
+            body: JSON.stringify({ url: image, preview })
+        })
+        const imageData = await imageRes.json()
+        dispatch(addImage(imageData))
+    }
+    return res
+}
 
 
 const initialState = {}

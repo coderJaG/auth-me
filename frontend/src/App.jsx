@@ -7,7 +7,9 @@ import Navigation from "./components/Navigation";
 import GetAllSpots from "./components/GetAllSpots";
 import SpotDetails from "./components/SpotDetails";
 import CreateSpot from "./components/CreateSpot";
-import Reviews from "./components/Reviews";
+import CurrentUserSpots from "./components/CurrentUserSpots";
+import UpdateSpot from "./components/UpdateSpot";
+import SpotLayout from "./components/SpotLayout";
 
 
 
@@ -38,11 +40,25 @@ const router = createBrowserRouter([
       },
       {
         path: '/spots/:spotId',
-        element: <SpotDetails />
+        element: <SpotLayout />,
+        children: [
+          {
+            index: true,
+            element: <SpotDetails />
+          },
+          {
+            path:'edit',
+            element: <UpdateSpot />
+          }
+        ]
       },
       {
         path: '/spots',
         element: <CreateSpot />
+      },
+      {
+        path: '/spots/current',
+        element: <CurrentUserSpots />
       },
     ]
   }

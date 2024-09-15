@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import {useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useModal } from '../context/Modal';
 import * as sessionActions from '../../store/session'
 
@@ -14,42 +14,39 @@ const SignupFormModal = () => {
     const [errors, setErrors] = useState({});
     const { closeModal } = useModal();
 
-
-
     // Password matching control
-    useEffect(() => {
-        const passwordMatchErr = { ...errors };
-        if (confirmPassword !== password) {
-            passwordMatchErr.confirmPassword = 'Passwords do not match';
-        } else {
-            delete passwordMatchErr.confirmPassword;
-        }
-        setErrors(passwordMatchErr);
-    }, [password, confirmPassword]);
+    // useEffect(() => {
+    //     const passwordMatchErr = { ...errors };
+    //     if (confirmPassword !== password) {
+    //         passwordMatchErr.confirmPassword = 'Passwords do not match';
+    //     } else {
+    //         delete passwordMatchErr.confirmPassword;
+    //     }
+    //     setErrors(passwordMatchErr);
+    // }, [password, confirmPassword]);
 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-       
-        if (confirmPassword !== password) {
-            setErrors({ ...errors, confirmPassword: 'Passwords do not match' });
-            return;
-        }
 
-        try {
-            await dispatch(sessionActions.signup({ firstName, lastName, email, username, password }))
-            .then(closeModal);
+        if (confirmPassword === password) {
             setErrors({});
-        } catch (res) {
-            const data = await res.json();
-            if (data?.errors) {
-                setErrors({ ...errors, ...data.errors });
-            }
-        }
-    };
 
-    //const ifErrors = Object.values(errors).length > 0
+            return dispatch(sessionActions.signup({ firstName, lastName, email, username, password }))
+                .then(closeModal)
+                .catch(
+                    async (res) => {
+                        const data = await res.json();
+                        if (data?.errors) setErrors(data.errors);
+                    }
+                );
+        }
+        return setErrors({
+            confirmPassword: "Passwords do not match"
+        });
+
+    };
 
     return (
 

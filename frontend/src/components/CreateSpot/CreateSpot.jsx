@@ -1,15 +1,23 @@
 
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { newSpot } from "../../store/spots";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+
+import { newSpot, spotDetails, editSpot } from "../../store/spots";
 
 
 
 const CreateSpot = () => {
-    const currUser = useSelector(state => state.session.user);
     const dispatch = useDispatch();
     const navigate = useNavigate()
+    const { spotId } = useParams();
+    const spotForEdit = useSelector(state => state.spots.spot)
+
+    useEffect(() => {
+        if (spotId) {
+            dispatch(spotDetails(spotId));
+        }
+    }, [dispatch, spotId]);
 
     const [address, setAddress] = useState('');
     const [city, setCity] = useState('');
@@ -21,12 +29,32 @@ const CreateSpot = () => {
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
     const [errors, setErrors] = useState({});
-    const [images, setImages] = useState(['', '', '', '']);
     const [preview, setPreview] = useState(true)
+    const [images, setImages] = useState(['', '', '', '']);
 
-    const createdSpot = useSelector(state => state.spots.spot)
+    useEffect(() => {
+        if (spotId && spotForEdit) {
+            setAddress(spotForEdit.address);
+            setCity(spotForEdit.city);
+            setState(spotForEdit?.state)
+            setCountry(spotForEdit?.country)
+            setLat(spotForEdit?.lat)
+            setLng(spotForEdit?.lng)
+            setName(spotForEdit?.name)
+            setDescription(spotForEdit?.description)
+            setPrice(spotForEdit?.price)
+            setImages(spotForEdit.SpotImages?.map(image => image.url) || ['', '', '', '']);
+        }
+    }, [spotForEdit, spotId]);
+    // useEffect(() => {
+    //     if (spotId && spotForEdit?.SpotImages) {
+    //         setImages(spotForEdit.SpotImages.map(image => image?.url || ''));
+    //     } else if (!spotId) {
+    //         setImages(['', '', '', '']);
+    //     }
+    // }, [spotId, spotForEdit]);
 
-
+    console.log('this is edit info', spotForEdit)
     const handleImageChange = (i, e) => {
         const newImages = [...images];
         newImages[i] = e.target.value;
@@ -70,20 +98,32 @@ const CreateSpot = () => {
             return;
         }
 
-
-        return dispatch(newSpot(newSpotData))
-            .then(res => { navigate(`/spots/${res.id}`) })
-            .catch(
-                async (res) => {
-                    const data = await res.json();
-                    if (data?.errors) setErrors(data.errors);
-                }
-            );
+        if (spotForEdit) {
+            return dispatch(editSpot(newSpotData, spotId))
+                .then(res => { navigate(`/spots/${res.id}`) })
+                .catch(
+                    async (res) => {
+                        const data = await res.json();
+                        if (data?.errors) setErrors(data.errors);
+                    }
+                );
+        } else {
+            return dispatch(newSpot(newSpotData))
+                .then(res => { navigate(`/spots/${res.id}`) })
+                .catch(
+                    async (res) => {
+                        const data = await res.json();
+                        if (data?.errors) setErrors(data.errors);
+                    }
+                );
+        }
     }
 
     return (
+
         <>
-            <h1>Create A Spot</h1>
+
+            <h1>{spotId ? 'Update your Spot' : 'Create A Spot'}</h1>
             <h3>Where's you place located</h3>
             <p>Guests will only get your exact address once they booked a
                 reservation.</p>
@@ -207,9 +247,9 @@ const CreateSpot = () => {
                 <button type="submit">Create Spot</button>
             </form>
         </>
-    )
 
-}
+    );
+};
 
 
 

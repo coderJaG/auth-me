@@ -28,7 +28,7 @@ const SpotDetails = () => {
         <p>{spot.city}, {spot.state}, {spot.country}</p>
       </div>
       <div>Images Div</div>
-      <h1>Hosted by {spot.Owner.firstName} {spot.Owner.lastName}</h1>
+      {spot.Owner && <h1>Hosted by {spot.Owner.firstName} {spot.Owner.lastName}</h1>}
       <p>{spot.description}</p>
       <div><span>${spot.price} night</span> <br />
         {(spot.avgStarRating > 0) && <span>stars {spot.avgStarRating}</span>} <br />

@@ -171,7 +171,7 @@ router.get('/', async (req, res, next) => {
                 avgRating = (spot.Reviews.reduce((acc, rating) => acc + rating.stars, 0) / spot.Reviews.length).toFixed(1);
                 avgRating = parseFloat(avgRating)
             }
-           // console.log('this is test', spot.Images[0].preview)
+            // console.log('this is test', spot.Images[0].preview)
             const previewImage = spot.Images && spot.Images.length > 0
                 ? spot.Images[0].preview
                     ? spot.Images[0].url
@@ -357,6 +357,59 @@ router.post('/:spotId/images', requireAuth, async (req, res) => {
         "message": "Forbidden"
     });
 });
+
+//Edit an image based on spotId
+router.put('/:spotId/images/:imageId', requireAuth, async (req, res) => {
+    const { spotId } = req.params;
+    const getSpotById = await Spot.findByPk(spotId, {
+        include: Image 
+    });
+
+    if (!getSpotById) {
+        return res.status(404).json({
+            "message": "Spot couldn't be found"
+        });
+    };
+
+    const currentUserId = req.user.id;
+    const spotOwnerId = getSpotById.ownerId;
+    if (currentUserId === spotOwnerId) {
+        const { url, preview } = req.body;
+        const updatedImages = []; 
+
+        for (const image of getSpotById.Images) { 
+            const updateImage = await Image.findByPk(image.id);
+
+            if (!updateImage) {
+                return res.status(404).json({
+                    "message": "Image couldn't be found"
+                });
+            }
+
+            updateImage.set({
+                url,
+                preview,
+            });
+            await updateImage.save();
+
+            const result = updateImage.toJSON();
+            delete result.imageableId;
+            delete result.imageableType;
+            delete result.createdAt;
+            delete result.updatedAt;
+
+            updatedImages.push(result);
+        }
+
+        return res.json({ Images: updatedImages }); 
+    };
+
+
+    return res.status(403).json({
+        "message": "Forbidden"
+    });
+});
+
 
 //create a spot after user is authenticateed
 router.post('/', requireAuth, async (req, res) => {

@@ -6,6 +6,7 @@ import LoginFormModal from '../LoginFormModal';
 import SignupFormModal from "../SignupFormModal";
 import ProfileButton from "./ProfileButton";
 import './Navigation.css';
+import { clearSpotDetails } from "../../store/spots";
 
 
 const Navigation = () => {
@@ -18,7 +19,7 @@ const Navigation = () => {
         <>
         <div className="nav-bar">
         
-         {currUser &&<div><Link to='/spots'>Create a New Spot</Link></div>}
+         {currUser &&<div><NavLink to='/spots' onClick={()=> dispatch(clearSpotDetails())}>Create a New Spot</NavLink></div>}
             <ul className="nav-ul">
                 <li className={userHomeClass}> <NavLink to='/'>Home</NavLink></li>
                 {!currUser && <li className="login"><OpenModalButton
