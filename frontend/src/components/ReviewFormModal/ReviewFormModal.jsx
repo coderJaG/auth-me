@@ -12,7 +12,7 @@ import '../Stars/Stars.css';
 
 const ReviewFormModal = ({ spotId }) => {
     const dispatch = useDispatch();
-    const closeModal = useModal();
+    const {closeModal} = useModal();
     const [review, setReview] = useState('');
     const [rating, setRating] = useState(0);
     const [errors, setErrors] = useState({});

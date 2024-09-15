@@ -8,6 +8,7 @@ const CREATE_NEW_SPOT = 'spots/createNewSpot'
 const GET_ALL_SPOT_REVIEWS = 'spots/getAllSpotReviews';
 const CREATE_REVIEW = 'spots/createReview'
 const ADD_IMAGE = 'spots/addImage'
+const DELETE_SPOT = 'spots/deleteSpot'
 
 
 const getAllSpots = (spots) => {
@@ -47,7 +48,12 @@ const addImage = (image) => ({
     payload: image
 })
 
-export const clearSpotDetails = ()=> {
+const deleteSpot = (spotId) => ({
+    type: DELETE_SPOT,
+    payload: spotId
+})
+
+export const clearSpotDetails = () => {
     state.spots.spot = null
 }
 
@@ -149,6 +155,15 @@ export const editSpot = (spotData, spotId) => async (dispatch) => {
 }
 
 
+export const deleteASpot = (spotId) => async (dispatch) => {
+    console.log('spotid', spotId)
+    const res = await csrfFetch(`/api/spots/${spotId}`, {
+        method: 'DELETE'
+    })
+    dispatch(deleteSpot(spotId))
+    return res
+}
+
 const initialState = {}
 const spotsReducer = (state = initialState, action) => {
     switch (action.type) {
@@ -176,9 +191,14 @@ const spotsReducer = (state = initialState, action) => {
             return newState;
         }
         case ADD_IMAGE: {
-                const newState = { ...state }
-                newState.images = action.payload
-                return newState
+            const newState = { ...state }
+            newState.images = action.payload
+            return newState
+        }
+        case DELETE_SPOT: {
+            const newState = {...state}
+            newState.spots = newState.spots.filter(spot => spot.id !== action.payload)
+            return  newState
         }
         default:
             return state

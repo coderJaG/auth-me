@@ -14,12 +14,10 @@ function LoginFormModal () {
    const handleSubmit = (e) => {
     e.preventDefault();
      setErrors({});
-    console.log(errors)
     return dispatch(sessionActions.login({ credential, password }))
     .then(()=> closeModal())
     .catch(
       async (res) => {
-        console.log('this is res',res)
         const data = await res.json();
         if (data?.errors) setErrors(data.errors);
       }

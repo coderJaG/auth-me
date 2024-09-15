@@ -54,7 +54,7 @@ const CreateSpot = () => {
     //     }
     // }, [spotId, spotForEdit]);
 
-    console.log('this is edit info', spotForEdit)
+    
     const handleImageChange = (i, e) => {
         const newImages = [...images];
         newImages[i] = e.target.value;
