@@ -2,7 +2,7 @@ import { useDispatch } from "react-redux";
 import { deleteASpot } from "../../store/spots";
 import { useModal } from "../context/Modal";
 import { useState } from "react";
-import { deleteAReview } from "../../store/reviews";
+// import { deleteAReview } from "../../store/reviews";
 
 
 
