@@ -2,7 +2,8 @@
     display: flex;
     width: 1200px;
     color: red;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
     margin: auto;
     padding: 5px;
 }
@@ -18,6 +19,7 @@ ul {
     padding-left: 0;
     padding-top: 10px;
     padding-bottom: 5px;
+    float: right;
 
 }
 
@@ -33,6 +35,15 @@ ul {
         'signup profile-dropdown';
     padding-right: 10px;
 }
+
+.nav-right { 
+    display: flex;
+    align-items: center;
+}
+
+.nav-create-spot-link {
+    margin-right: 30px; 
+}
 /* when no user is logged in */
 .home {
     grid-area: home;
@@ -44,21 +55,18 @@ ul {
 .user-home {
     grid-area: home;
     line-height: 37px;
-    /* margin-bottom: 5px; */
     text-align: right;
 }
 
 .login {
     grid-area: login;
     margin-bottom: 5px;
-    /* margin-right: 20px; */
     text-align: center;
 }
 
 .signup {
     grid-area: signup;
     margin-bottom: 5px;
-    /* margin-right: 20px; */
     text-align: center;
 }
 
@@ -67,7 +75,6 @@ ul {
     grid-area: profile;
     flex-direction: column;
     justify-content: flex-start;
-    /* width: 115px; */
 }
 
 
@@ -100,3 +107,63 @@ ul {
 .logout-btn {
     margin-top: 5px;
 }
+
+
+.logo {
+    float: left;
+}
+@media screen and (max-width: 1024px) and (min-width: 769px) { 
+  
+  
+    .nav-bar {
+      width: 90%; /* Or another suitable width */
+    }
+  
+  
+  }
+
+/* Tablet styles */
+@media screen and (max-width: 768px) {
+    .nav-bar {
+      width: 100%; 
+      padding: 3px; 
+    }
+  
+    .nav-ul {
+      grid-template-columns: 1fr; 
+      grid-template-areas: 
+        'home'
+        'login'
+        'signup'
+        'profile-dropdown'; 
+    }
+  
+    .nav-create-spot-link {
+      margin-right: 30px; 
+    }
+  }
+  
+  /* Mobile styles */
+  @media screen and (max-width: 480px) {
+    .nav-bar {
+      padding: 2px; 
+      min-width: 300px;
+    }
+  
+    .nav-ul li {
+      padding-left: 5px; 
+    }
+  
+    .profile-btn {
+      width: 30px;  
+      height: 30px;
+    }
+  
+    .profile-icon {
+      font-size: 25px; 
+    }
+  
+    .nav-create-spot-link {
+      margin-right: 20px; 
+    }
+  }

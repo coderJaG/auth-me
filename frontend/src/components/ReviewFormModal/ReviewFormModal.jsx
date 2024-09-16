@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { createNewReview } from "../../store/spots";
+import { createNewReview, spotDetails } from "../../store/spots";
 
 import { useModal } from "../context/Modal";
 import Stars from "../Stars/Stars";
@@ -27,6 +27,7 @@ const ReviewFormModal = ({ spotId }) => {
         e.preventDefault();
 
         return dispatch(createNewReview({ review, stars: rating }, spotId)) 
+            .then(()=> dispatch(spotDetails(spotId)))
             .then(closeModal)
             .catch(
                 async (res) => {

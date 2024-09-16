@@ -1,4 +1,4 @@
-// import { csrfFetch } from "./csrf";
+import { csrfFetch } from "./csrf";
 
 
 // const GET_ALL_REVIEWS = 'reviews/getAllReviews';
@@ -18,18 +18,37 @@
 //     dispatch(getAllReviews(data))
 //     return res
 // }
-
-// const initialState = {}
-// const reviewsReducer = (state = initialState, action)=>{
-//     switch(action.type) {
-//         case GET_ALL_REVIEWS: {
-//             return {...state, reviews: action.payload}
-//         }
-//         default:
-//            return state
-//     }
-
-// }
+const DELETE_REVIEW = 'reviews/deleteReview'
 
 
-// export default reviewsReducer;
+const deleteReview = (reviewId) => ({
+    type: DELETE_REVIEW,
+    payload: reviewId
+})
+
+export const deleteAReview = (reviewId) => async (dispatch) => {
+    console.log('thisis review id', reviewId)
+    const res = await csrfFetch(`/api/reviews/${reviewId}`, {
+        method: 'DELETE'   
+    });
+    dispatch(deleteAReview(reviewId))
+
+    return res;
+}
+
+const initialState = {}
+const reviewsReducer = (state = initialState, action)=>{
+    switch(action.type) {
+        case DELETE_REVIEW: {
+            const newState = {...state}
+            newState.spots.reviews = newState.spots.reviews.filter(review=> review.id !== action.payload)
+            return newState
+        }
+        default:
+           return state
+    }
+
+}
+
+
+export default reviewsReducer;

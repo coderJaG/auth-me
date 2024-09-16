@@ -6,6 +6,7 @@ import OpenModalButton from "../OpenModalButton";
 import ReviewFormModal from "../ReviewFormModal";
 import { getReviewsForSpot } from "../../store/spots";
 import './Reviews.css'
+import DeleteSpotModal from "../DeleteSpotModal";
 
 
 
@@ -15,12 +16,15 @@ const Reviews = () => {
     const owner = useSelector(state => state.spots.spot.ownerId);
     const reviews = useSelector(state => state.spots.reviews);
     const { spotId } = useParams();
-    const [errors, setErrors] = useState({})
+    const [reload, setReload] = useState(false)
 
 
+    const handleDelete = () => {
+        setReload(!reload)
+    }
     useEffect(() => {
         dispatch(getReviewsForSpot(spotId));
-    }, [dispatch, spotId]);
+    }, [dispatch, spotId, reload]);
 
     let authorized;
     let showHideButton;
@@ -29,34 +33,44 @@ const Reviews = () => {
         authorized = currUser.id === owner
         let userDidReview;
         for (const rev in reviews) {
-            reviews[rev].User.id === currUser.id ? userDidReview = true : userDidReview = false
+            if (reviews) {
+                reviews[rev].User.id === currUser.id ? userDidReview = true : userDidReview = false
+            }
         }
         showHideButton = authorized || userDidReview ? 'hidden' : '';
         monthNames = [
             'January', 'February', 'March', 'April', 'May', 'June',
             'July', 'August', 'September', 'October', 'November', 'December'
         ];
-    
 
-    return (
-        <>
-            <h1>Reviews</h1>
-            <span className={showHideButton}> <OpenModalButton
-                buttonText='Post your review'
-                modalComponent={<ReviewFormModal spotId={spotId} />} />
-            </span>
-            {
-                reviews && reviews.map(review => (
-                    <div key={review.id}>
-                        <p>{review.User.firstName}</p>
-                        <p>{monthNames[new Date(review.createdAt).getMonth()]} {new Date(review.createdAt).getFullYear()}</p>
-                        <p>{review.review}</p>
-                    </div>
-                ))
-            }
-        </>
-    )
-}
+
+        return (
+            <>
+                <h1>Reviews</h1>
+                <span className={showHideButton}> <OpenModalButton
+                    buttonText='Post your review'
+                    modalComponent={<ReviewFormModal spotId={spotId} />} />
+                </span>
+                {
+                    reviews && reviews.map(review => (
+                        <div key={review.id}>
+                            <p>{review.User.firstName}</p>
+                            <p>{monthNames[new Date(review.createdAt).getMonth()]} {new Date(review.createdAt).getFullYear()}</p>
+                            <p>{review.review}</p>
+                            {currUser.id === review.userId && <OpenModalButton
+                                buttonText='Delete'
+                                modalComponent={<DeleteSpotModal
+                                    reviewId={review.id}
+                                    onDelete={handleDelete}
+                                />}
+                            />}
+
+                        </div>
+                    ))
+                }
+            </>
+        )
+    }
 };
 
 

@@ -53,10 +53,10 @@ router.post('/', validateLogin, async (req, res, next) => {
     });
 
     if (!User || !bcrypt.compareSync(password, user.hashedPassword.toString())) {
-        // const err = new Error('Login failed');
-        // err.status = 401;
-        //err.title = 'Login failed';
-       // err.errors = { credential: 'The provided cedentiails were invalid.' }
+    //     const err = new Error('Login failed');
+    //     err.status = 401;
+    //     err.title = 'Login failed';
+    //    err.errors = { credential: 'The provided cedentiails were invalid.' }
         return res.status(401).json({
             "message": "Invalid credentials"
           });

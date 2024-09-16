@@ -18,9 +18,10 @@ const Navigation = () => {
     return (
         <>
         <div className="nav-bar">
-        
-         {currUser &&<div><NavLink to='/spots' onClick={()=> dispatch(clearSpotDetails())}>Create a New Spot</NavLink></div>}
-            <ul className="nav-ul">
+            {<NavLink to='/'> <img className='logo' src="/auth-me-logo" /> </NavLink>}
+        <div className="nav-right">
+         {currUser && <NavLink className="nav-create-spot-link nav-right" to='/spots' onClick={()=> dispatch(clearSpotDetails())}>Create a New Spot</NavLink>}
+            <ul className="nav-ul ">
                 <li className={userHomeClass}> <NavLink to='/'>Home</NavLink></li>
                 {!currUser && <li className="login"><OpenModalButton
                     buttonText="Log In"
@@ -34,7 +35,7 @@ const Navigation = () => {
                 </li>}
                 {currUser && <li className="profile"><ProfileButton user={currUser} /></li>}
             </ul>
-            
+            </div>
         </div>
         <hr/>
         </>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useModal } from '../context/Modal';
 import * as sessionActions from '../../store/session'
+import './SignupFormModal.css'
 
 const SignupFormModal = () => {
     const dispatch = useDispatch()
@@ -28,11 +29,8 @@ const SignupFormModal = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-
         if (confirmPassword === password) {
             setErrors({});
-
             return dispatch(sessionActions.signup({ firstName, lastName, email, username, password }))
                 .then(closeModal)
                 .catch(
@@ -45,62 +43,72 @@ const SignupFormModal = () => {
         return setErrors({
             confirmPassword: "Passwords do not match"
         });
-
     };
+    console.log(errors)
+    let disableButton = false
+    const fieldNames = [firstName, lastName, email, username, password, confirmPassword]
+    fieldNames.forEach(name => {
+        if (name.length === 0) {
+            disableButton = true
+        }
+    })
+
+    disableButton = disableButton || !(username.length >= 4 && password.length >= 6)
 
     return (
 
         <>
-            <h1>Sign Up</h1>
-            <form onSubmit={handleSubmit}>
-                <label>First Name <span>*</span></label>
+            <h1 className='signup-form-heading'>Sign Up</h1>
+            <form className='signup-form' onSubmit={handleSubmit}>
+                {/* <label>First Name <span>*</span></label> */}
                 <input
                     type='text'
                     value={firstName}
                     onChange={e => setFirstName(e.target.value)}
-
+                    placeholder='First Name'
                 />
                 {errors.firstName && <p>{errors.firstName}</p>}
-                <label>Last Name <span>*</span></label>
+                {/* <label>Last Name <span>*</span></label> */}
                 <input
                     type='text'
                     value={lastName}
                     onChange={e => setLastName(e.target.value)}
-
+                    placeholder='Last Name'
                 />
                 {errors.lastName && <p>{errors.lastName}</p>}
-                <label>Email <span>*</span></label>
+                {/* <label>Email <span>*</span></label> */}
                 <input
                     type='email'
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-
+                    placeholder='Email'
                 />
                 {errors.email && <p>{errors.email}</p>}
-                <label>Username <span>*</span></label>
+                {/* <label>Username <span>*</span></label> */}
                 <input
                     type='text'
                     value={username.toLowerCase()}
                     onChange={e => setUserName(e.target.value)}
-
+                    placeholder='Username'
                 />
                 {errors.username && <p>{errors.username}</p>}
-                <label>Password <span>*</span></label>
+                {/* <label>Password <span>*</span></label> */}
                 <input
                     type='password'
                     value={password}
                     onChange={e => setPassword(e.target.value)}
-
+                    placeholder='Password'
                 />
                 {errors.password && <p>{errors.password}</p>}
-                <label>Confirm Password *</label>
+                {/* <label>Confirm Password *</label> */}
                 <input
                     type='password'
                     value={confirmPassword}
                     onChange={e => setConfirmPassword(e.target.value)}
+                    placeholder='Confirm Password'
                 />
                 {errors.confirmPassword && <p>{errors.confirmPassword}</p>}
-                <button type='submit' >Sign Up</button>
+                <button className='signup-button' type='submit' disabled={disableButton}>Sign Up</button>
             </form>
         </>
     );

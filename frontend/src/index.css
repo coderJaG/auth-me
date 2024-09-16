@@ -1,1 +1,23 @@
 /* TODO: Add sitewide styles */
+
+
+
+/* 
+.nunito-auth-me {
+  font-family: "Nunito", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+} */
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; 
+  }
+
+
+  body {
+    font-family: "nunito", Verdana, Geneva, Tahoma, sans-serif;
+  }
