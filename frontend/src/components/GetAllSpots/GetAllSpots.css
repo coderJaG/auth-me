@@ -1,13 +1,19 @@
 
-h1 {
+.spots-header {
     /* margin: auto; */
     text-align: center;
+
+}
+
+.spot-details-link {
+    text-decoration: none;
+    /* width: 246px */
 }
 
 .spots-container {
     display: flex;
     flex-flow: row wrap;
-    gap: 10px;
+    gap: 12px;
     margin: auto;
     width: 1024px;
     margin: auto;
@@ -16,11 +22,47 @@ h1 {
 
 
 .spot {
-    border: 1px solid black;
-    border-radius: 10px;
+    
     box-sizing: border-box;
     color: red;
-    flex:0 0 24%;
+    flex:0 0 25%;
+    /* padding: 5px; */
+    /* width: 100%; */
+}
+
+#spots-tags {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
+    grid-template-areas: 
+    "city-state rating"
+    " price ."
+    ;
     padding: 5px;
-   
+}
+
+#spots-city-state{
+    grid-area: city-state;
+    text-align: left;
+}
+
+#spots-star-rating {
+    grid-area: rating;
+    text-align: right;
+}
+
+#spots-price {
+    grid-area: price;
+    text-align: left;
+}
+
+.spots-image {
+    /* border: 1px solid black; */
+    border-radius: 10px;
+    width: 246px;
+}
+
+.spots-name{
+    margin-left: 5px;
+    margin-bottom: 10px;
 }

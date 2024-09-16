@@ -4,6 +4,7 @@ import { useEffect} from "react";
 
 import { spotDetails } from '../../store/spots';
 import Reviews from "../Reviews";
+import './SpotDetails.css'
 
 
 
@@ -24,9 +25,9 @@ const SpotDetails = () => {
 
   return (
     <>
-      <div>
-        <h2>{spot.name}</h2>
-        <p>{spot.city}, {spot.state}, {spot.country}</p>
+      <div className="spot-details-div">
+        <h2 className="spot-name">{spot.name}</h2>
+        <div className="spot"><p>{spot.city}, {spot.state}, {spot.country}</p></div>
       </div>
       <div>Images Div</div>
       {spot.Owner && <h1>Hosted by {spot.Owner.firstName} {spot.Owner.lastName}</h1>}

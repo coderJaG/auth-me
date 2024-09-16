@@ -13,19 +13,19 @@ module.exports = {
       {
         imageableId: 1,
         imageableType: 'Spot',
-        url: '../../image/image-1png',
+        url: 'https://picsum.photos/id/33/5000/3333.jpg',
         preview: true
       },
       {
         imageableId: 2,
         imageableType: 'Spot',
-        url: '../../image/image-2png',
-        preview: false
+        url: 'https://picsum.photos/id/37/2000/1333.jpg',
+        preview: true
       },
       {
         imageableId: 2,
         imageableType: 'Review',
-        url: '../../image/image-2png',
+        url: 'https://picsum.photos/id/38/1280/960.jpg',
         preview: true
       }
     ])

@@ -21,3 +21,7 @@
   body {
     font-family: "nunito", Verdana, Geneva, Tahoma, sans-serif;
   }
+
+  #logo{
+    width: 100px;
+  }

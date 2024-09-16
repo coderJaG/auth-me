@@ -7,6 +7,7 @@ import SignupFormModal from "../SignupFormModal";
 import ProfileButton from "./ProfileButton";
 import './Navigation.css';
 import { clearSpotDetails } from "../../store/spots";
+import logo from '/logo.png'
 
 
 const Navigation = () => {
@@ -18,7 +19,7 @@ const Navigation = () => {
     return (
         <>
         <div className="nav-bar">
-            {<NavLink to='/'> <img className='logo' src="/auth-me-logo" /> </NavLink>}
+            {<NavLink to='/'> <img id='logo' src={logo} /> </NavLink>}
         <div className="nav-right">
          {currUser && <NavLink className="nav-create-spot-link nav-right" to='/spots' onClick={()=> dispatch(clearSpotDetails())}>Create a New Spot</NavLink>}
             <ul className="nav-ul ">
