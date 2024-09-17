@@ -213,9 +213,7 @@ const spotsReducer = (state = initialState, action) => {
             return newState
         }
         case CREATE_REVIEW: {
-            // const newState = { ...state }
-            // newState.reviews.push(action.payload)
-            // return newState;
+          
             return {
                 ...state,
                 reviews: [...state.reviews, action.payload] 
