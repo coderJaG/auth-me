@@ -93,13 +93,13 @@ export const newSpot = (spotData) => async (dispatch) => {
     dispatch(createNewSpot(res));
     const filteredImages = images.filter(image => image.trim() != '')
 
-    // Set preview to true only for the first image
+    
     for (let i = 0; i < filteredImages.length; i++) {
         let imageRes = await csrfFetch(`/api/spots/${res.id}/images`, {
             method: 'POST',
             body: JSON.stringify({ 
                 url: filteredImages[i], 
-                preview: i === 0 // Only the first image is preview 
+                preview: i === 0 
             })
         })
         const imageData = await imageRes.json()
@@ -151,16 +151,34 @@ export const editSpot = (spotData, spotId) => async (dispatch) => {
     })
     res = await res.json();
     dispatch(createNewSpot(res));
-    const filteredImages = images.filter(image => image.trim() !== '')
-    for await (let image of filteredImages) {
+
+    const filteredImages = images.filter(image => image.trim() !== '');
+
+    // Separate new and existing images based on their IDs
+    const newImages = filteredImages.filter(image => !image.id); 
+    const existingImages = filteredImages.filter(image => image.id);
+
+ 
+    for await (let image of newImages) {
+        let imageRes = await csrfFetch(`/api/spots/${res.id}/images`, {
+            method: 'POST',
+            body: JSON.stringify({ url: image, preview }) 
+        });
+        const imageData = await imageRes.json();
+        dispatch(addImage(imageData));
+    }
+
+    
+    for await (let image of existingImages) {
         let imageRes = await csrfFetch(`/api/spots/${res.id}/images/${image.id}`, {
             method: 'PUT',
-            body: JSON.stringify({ url: image, preview })
-        })
-        const imageData = await imageRes.json()
-        dispatch(addImage(imageData))
+            body: JSON.stringify({ url: image.url, preview: image.preview })
+        });
+        const imageData = await imageRes.json();
+        dispatch(addImage(imageData)); 
     }
-    return res
+
+    return res;
 }
 
 

@@ -39,14 +39,11 @@ const SpotDetails = () => {
             <img src={spot?.SpotImages[0].url} />
           </div>
           <div id='spot-images'>
-            {spot?.SpotImages.slice(1).map(image => {
-             return (
-                <div className="images" key={image.id} >
-
-                  <img className="image" src={image.url} />
-
-                </div>)
-            })}
+          {spot?.SpotImages.slice(1, 5).map(image => ( 
+                    <div className="images" key={image.id}>
+                        <img className="image" src={image.url} />
+                    </div>
+                ))}
           </div>
         </div>
       </div>

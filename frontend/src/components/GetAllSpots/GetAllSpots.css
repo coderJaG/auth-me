@@ -37,15 +37,27 @@ a:visited {
     margin: auto;
 
 }
+.images{
+    box-sizing: border-box;
+    flex: 0 0 calc(50% - 10px);
+    padding: 5px 5px 5px 0px;
+    margin: 0px;
+    
+}
 
+.image{
+    width: 100%; 
+    height: 200px; 
+    object-fit: cover; 
+ 
+}
 
 .spot {
     
     box-sizing: border-box;
-    /* color: red; */
-    flex:0 0 24%;
-    /* padding: 5px; */
-    /* width: 100%; */
+    flex: 0 0 calc(25% - 10px);
+    padding: 5px 5px 5px 0px;
+    margin: 0px;
 }
 
 #spots-tags {
@@ -77,7 +89,9 @@ a:visited {
 .spots-image {
     /* border: 1px solid black; */
     border-radius: 10px;
-    width: 246px;
+    width: 100%; 
+    height: 200px; 
+    object-fit: cover; 
 }
 
 .spots-name{
