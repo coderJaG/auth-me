@@ -38,7 +38,7 @@ const Navigation = () => {
             </ul>
             </div>
         </div>
-        <hr/>
+      <div id="nav-spacer"></div>
         </>
     )
 }

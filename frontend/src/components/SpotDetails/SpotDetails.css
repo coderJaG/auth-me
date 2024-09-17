@@ -1,0 +1,118 @@
+.spot-details-container {
+    display: grid;
+    margin: auto;
+    width: 1000px;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(3 1fr);
+    grid-template-areas:
+    "grid-top"
+    "grid-middle"
+    "grid-bottom"
+    ;
+}
+
+.top {
+    grid-area: grid-top;
+}
+
+.middle{
+    grid-area: grid-middle;
+    padding-top: 25px;
+}
+
+.bottom {
+    grid-area: grid-bottom;
+}
+
+
+#spot-images-div {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
+    grid-template-areas: 
+    "one two"
+    "one two"
+    ;
+}
+
+
+#main-image{
+    grid-area: one;
+}
+
+#spot-images {
+    grid-area: two;
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.image{
+    width: 50%;
+    flex: 0 0 25%
+}
+
+#main-image {
+    display: flex;
+    justify-content: center;
+    padding:5px;
+}
+
+#main-image img {
+    width: 100%
+}
+
+.spot-tags {
+    justify-self: end;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border: 1px solid black;
+    border-radius: 5px;
+    width: 280px;
+    padding: 20px;
+    margin-top: 25px;
+}
+
+.spot-description {
+    justify-self: start;
+    text-align: left;}
+
+.tags:nth-child(3) {    
+    grid-column: 1 / span 2; 
+  }
+
+  .price {
+    text-align: left;
+  }
+
+  .rating{
+    text-align: right;
+  }
+
+  .reserve-btn{
+    display: flex;
+    justify-content: center;
+  }
+  .reserve-btn button{
+    background-color: #f34646;
+    color: white;
+    width: 100%;
+    height: 30px;
+    margin-top: 10px;
+    box-shadow: 2px 3px black;
+  }
+
+
+
+  .dot-divider {
+    display: inline-block;
+    width: 3px; 
+    height: 3px; 
+    border-radius: 50%; 
+    background-color: black; 
+    vertical-align: middle; 
+    margin: 5px; 
+  }
+
+  .description {
+    width: 650px
+  }

@@ -3,6 +3,7 @@ import GetAllSpots from "../GetAllSpots";
 import { useEffect } from "react";
 
 import { spots } from "../../store/spots";
+import './CurrentUserSpots.css'
 
 const CurrentUserSpots = () => {
 const dispatch = useDispatch()
@@ -18,7 +19,7 @@ useEffect(() => {
 
     return (
         <>
-        <h1>User Spots</h1>
+        {/* <h1>User Spots</h1> */}
        
        
        {getAllSpots && <GetAllSpots allSpots={getAllSpots.filter(spot=> spot.ownerId === currUser.id)} currUserSpots={currUserSpots}/>}

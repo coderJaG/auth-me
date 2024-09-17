@@ -20,8 +20,16 @@
 
   body {
     font-family: "nunito", Verdana, Geneva, Tahoma, sans-serif;
+    color: black
+
   }
 
   #logo{
     width: 100px;
   }
+  a:visited {
+    color: black;
+  }
+
+
+  

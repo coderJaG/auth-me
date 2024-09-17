@@ -198,10 +198,6 @@ const spotsReducer = (state = initialState, action) => {
             // const newState = { ...state }
             // newState.images = action.payload
             // return newState
-            return {
-                ...state,
-                images: { ...state.images, ...action.payload }
-            };
         }
         case DELETE_SPOT: {
             const newState = {...state}

@@ -3,3 +3,60 @@
 .hidden {
     display: none;
 }
+
+
+.reviews-container {
+    display: inline-block;
+}
+
+
+.reviews-ratings {
+    margin-bottom: 30px;
+}
+
+
+.description{
+    margin-bottom: 30px;
+}
+
+.fname{
+    font-weight: bold;
+}
+
+.date{
+    color: gray;
+    margin-bottom: 10px;
+}
+
+
+#spacer {
+    width: 100%;
+    border-top: 1px solid black;
+    margin: 20px auto 20px auto
+}
+
+
+.post-review-btn {
+    background-color: #f34646;
+    color: white;
+    width: 90px;
+    height: 30px;
+    margin-top: 10px;
+    box-shadow: 2px 3px black;
+    margin-bottom: 25px;
+}
+
+
+
+
+
+
+.dot-divider {
+    display: inline-block;
+    width: 3px; 
+    height: 3px; 
+    border-radius: 50%; 
+    background-color: black; 
+    vertical-align: middle; 
+    margin: 5px; 
+  }

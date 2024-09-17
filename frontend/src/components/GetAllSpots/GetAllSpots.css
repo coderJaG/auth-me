@@ -1,3 +1,20 @@
+a:visited {
+    text-decoration: none;
+}
+
+.main-spot-container {
+    display: grid;
+    grid-template-columns: 1;
+    grid-template-rows: repeat(2 1fr);
+    margin: auto;
+    max-width: 1024px;
+   
+    grid-template-areas: 
+    'header'
+    'body'
+    ;
+
+}
 
 .spots-header {
     /* margin: auto; */
@@ -11,9 +28,10 @@
 }
 
 .spots-container {
+    grid-area: body;
     display: flex;
     flex-flow: row wrap;
-    gap: 12px;
+    gap: 10px;
     margin: auto;
     width: 1024px;
     margin: auto;
@@ -25,7 +43,7 @@
     
     box-sizing: border-box;
     color: red;
-    flex:0 0 25%;
+    flex:0 0 24%;
     /* padding: 5px; */
     /* width: 100%; */
 }
@@ -66,3 +84,13 @@
     margin-left: 5px;
     margin-bottom: 10px;
 }
+
+.manage-spot-header {
+    grid-area: header;
+    display: inline-block;
+    justify-self: start;
+    width: 400px;
+   
+    margin-bottom: 30px;
+}
+
