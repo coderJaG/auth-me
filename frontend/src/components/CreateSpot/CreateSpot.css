@@ -1,0 +1,107 @@
+#create-spot-form-container {
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 400px;
+}
+
+
+#create-form-heading {
+    width: 100%;
+    text-align: left;
+    display: inline-block;
+}
+
+h3, h4, p {
+   margin-bottom: 10px;   
+}
+
+p {
+    font-size: small;
+}
+.address {
+    display: flex;
+    flex-flow: row wrap;
+    border-bottom: 1px solid black;
+    margin-bottom: 5px;
+}
+
+.street-country {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+
+}
+
+.street-country input {
+    margin-bottom: 15px;
+}
+.city {
+    width: 60%;
+    margin-bottom: 15px;
+}
+
+.state {
+    width: 30%;
+    margin-bottom: 15px;
+    margin-left: 10%;
+
+}
+.lattitude {
+    width: 45%;
+    margin-bottom: 15px;
+  
+}
+
+.longitude {
+    width: 45%;
+    margin-bottom: 15px;
+    margin-left: 10%;
+}
+
+textarea {
+    width: 100%
+}
+
+.name{
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+.title {
+    margin-top: 25px;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    margin-bottom: 25px;
+    padding-top: 15px;
+}
+
+.price-div {
+    width: 100%;
+    border-bottom: 1px solid black;
+    margin-bottom: 25px;
+}
+
+.price{
+    width: 100%;
+   
+    margin-bottom: 25px;
+}
+
+.image-input{
+width: 100%;
+display: inline-block;
+}
+
+.image-input input {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.button-div {
+    display: flex;
+    width: 100%;
+    margin: auto;
+    justify-content: center;
+}
+
