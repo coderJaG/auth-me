@@ -42,7 +42,7 @@ a:visited {
 .spot {
     
     box-sizing: border-box;
-    color: red;
+    /* color: red; */
     flex:0 0 24%;
     /* padding: 5px; */
     /* width: 100%; */

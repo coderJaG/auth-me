@@ -41,14 +41,22 @@
 }
 
 #spot-images {
-    grid-area: two;
+    /* grid-area: two; */
     display: flex;
     flex-flow: row wrap;
 }
 
+.images{
+    box-sizing: border-box;
+    flex: 0 0 50%;
+    padding: 5px 5px 5px 0px;
+    margin: 0px;
+    
+}
+
 .image{
-    width: 50%;
-    flex: 0 0 25%
+    width: 245px;
+  
 }
 
 #main-image {
@@ -69,7 +77,7 @@
     border-radius: 5px;
     width: 280px;
     padding: 20px;
-    margin-top: 25px;
+    margin-top: 30px;
 }
 
 .spot-description {
@@ -115,4 +123,9 @@
 
   .description {
     width: 650px
+  }
+
+  .spot-details-div {
+    display: inline-block;
+    width: 650px;
   }

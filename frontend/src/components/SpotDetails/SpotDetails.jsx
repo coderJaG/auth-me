@@ -41,7 +41,7 @@ const SpotDetails = () => {
           <div id='spot-images'>
             {spot?.SpotImages.slice(1).map(image => {
              return (
-                <div key={image.id} >
+                <div className="images" key={image.id} >
 
                   <img className="image" src={image.url} />
 

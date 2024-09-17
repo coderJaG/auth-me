@@ -72,7 +72,8 @@ export const spotDetails = (spotId) => async (dispatch) => {
 }
 
 export const newSpot = (spotData) => async (dispatch) => {
-    const { address, city, state, country, lat, lng, name, description, price, images, preview } = spotData
+    const { address, city, state, country, lat, lng, name, description, price, images } = spotData
+
     let res = await csrfFetch('/api/spots', {
         method: 'POST',
         body: JSON.stringify({
@@ -84,22 +85,30 @@ export const newSpot = (spotData) => async (dispatch) => {
             lng,
             name,
             description,
-            price,
+            price,  
+
         })
     })
     res = await res.json();
     dispatch(createNewSpot(res));
     const filteredImages = images.filter(image => image.trim() != '')
-    for await (let image of filteredImages) {
+
+    // Set preview to true only for the first image
+    for (let i = 0; i < filteredImages.length; i++) {
         let imageRes = await csrfFetch(`/api/spots/${res.id}/images`, {
             method: 'POST',
-            body: JSON.stringify({ url: image, preview })
+            body: JSON.stringify({ 
+                url: filteredImages[i], 
+                preview: i === 0 // Only the first image is preview 
+            })
         })
         const imageData = await imageRes.json()
         dispatch(addImage(imageData))
     }
     return res
 }
+
+
 
 export const getReviewsForSpot = (spotId) => async (dispatch) => {
     const res = await csrfFetch(`/api/spots/${spotId}/reviews`);
@@ -195,13 +204,17 @@ const spotsReducer = (state = initialState, action) => {
             };
         }
         case ADD_IMAGE: {
-            // const newState = { ...state }
-            // newState.images = action.payload
-            // return newState
+         
+            return {
+                ...state,
+                spot: { 
+                    ...state.spot, 
+                    SpotImages: [...(state.spot?.SpotImages || []), action.payload] 
+                }
+            };
         }
         case DELETE_SPOT: {
-            const newState = {...state}
-            newState.spots = newState.spots.filter(spot => spot.id !== action.payload)
+            const newState = {}
             return  newState
         }
         default:

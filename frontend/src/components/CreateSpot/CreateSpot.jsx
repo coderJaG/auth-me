@@ -118,7 +118,7 @@ const CreateSpot = () => {
                 );
         }
     }
-
+console.log('this is images,', images)
     return (
 
         <>
@@ -244,7 +244,7 @@ const CreateSpot = () => {
                 </section>
 
 
-                <button type="submit">Create Spot</button>
+                {spotId ? <button type="submit">Update Spot</button> : <button type="submit">Create Spot</button>}
             </form>
         </>
 
