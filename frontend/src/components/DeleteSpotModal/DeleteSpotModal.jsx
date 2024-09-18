@@ -1,8 +1,8 @@
 import { useDispatch } from "react-redux";
 import { deleteASpot } from "../../store/spots";
 import { useModal } from "../context/Modal";
-import { useState } from "react";
-// import { deleteAReview } from "../../store/reviews";
+// import { useState } from "react";
+import { deleteAReview } from "../../store/reviews";
 
 
 
@@ -10,7 +10,7 @@ const DeleteSpotModal = ({ spotId, reviewId, onDelete }) => {
     const dispatch = useDispatch();
     const { closeModal } = useModal();
 
-    const [errors, setErrors] = useState({})
+    // const [errors, setErrors] = useState({})
 
     const handleYesClick = async (e) => {
         e.preventDefault()
@@ -23,7 +23,8 @@ const DeleteSpotModal = ({ spotId, reviewId, onDelete }) => {
                 .catch(
                     async (res) => {
                         const data = await res.json();
-                        if (data?.errors) setErrors(data.errors);
+                        // if (data?.errors) setErrors(data.errors);
+                        return data
                     }
                 );
         } else {
@@ -32,7 +33,8 @@ const DeleteSpotModal = ({ spotId, reviewId, onDelete }) => {
                 .catch(
                     async (res) => {
                         const data = await res.json();
-                        if (data?.errors) setErrors(data.errors);
+                        // if (data?.errors) setErrors(data.errors);
+                        return data;
                     }
                 );
         }

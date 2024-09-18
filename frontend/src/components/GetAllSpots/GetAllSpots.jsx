@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { useEffect, useState } from 'react';
-import { Link, useNavigate, NavLink } from 'react-router-dom';
+import { useEffect} from 'react';
+import { useNavigate, NavLink } from 'react-router-dom';
 
 import { spotDetails, spots } from "../../store/spots";
 import UpdateSpot from '../UpdateSpot';
@@ -15,7 +15,7 @@ import './GetAllSpots.css';
 const GetAllSpots = ({ allSpots, currUserSpots }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [showUpdateSpot, setShowUpdateSpot] = useState(false);
+  const showUpdateSpot = false;
 
   const allSPotsFromStore = useSelector(state => state.spots.spots)
   allSpots = allSpots || allSPotsFromStore;
@@ -39,7 +39,7 @@ const GetAllSpots = ({ allSpots, currUserSpots }) => {
         {/* currUserSpots props enables additional current user only spots functionality */}
         <div className='manage-spot-header'>
           {currUserSpots && <h2 className={currUserClass}>Manage Your Spots</h2>}
-          {currUserSpots && <button className={currUserClass} onClick={e => navigate('/spots')}>Create a new Spot</button>}
+          {currUserSpots && <button className={currUserClass} onClick={() => navigate('/spots')}>Create a new Spot</button>}
         </div>
         <div className='spots-container'>
 
@@ -60,7 +60,7 @@ const GetAllSpots = ({ allSpots, currUserSpots }) => {
                   <p id='spots-price'>${spot.price} night</p>
                 </div>
                 </NavLink>
-                {currUserSpots && <button className={currUserClass} onClick={e => {
+                {currUserSpots && <button className={currUserClass} onClick={() => {
                   dispatch(spotDetails(spot.id));
                   navigate(`/spots/${spot.id}/edit`)
                 }}>Update</button>}

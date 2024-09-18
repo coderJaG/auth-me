@@ -30,8 +30,8 @@ const CreateSpot = () => {
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
     const [errors, setErrors] = useState({});
-    const [preview, setPreview] = useState(true)
     const [images, setImages] = useState(['', '', '', '']);
+    const preview = true;
 
     useEffect(() => {
         if (spotId && spotForEdit) {
@@ -125,7 +125,7 @@ const CreateSpot = () => {
         <div id="create-spot-form-container">
             <div id="create-form-heading">
                 <h3>{spotId ? 'Update your Spot' : 'Create a new Spot'}</h3>
-                <h4>Where's your place located</h4>
+                <h4>Where`&apos;`s your place located</h4>
                 <p>Guests will only get your exact address once they booked a
                     reservation.</p>
             </div>
@@ -204,7 +204,7 @@ const CreateSpot = () => {
                 </div>
                 <div className="title">
                     <label><h3>Create a title for your spot</h3>
-                        <p>Catch guests' attention with a spot title that highlights what makes
+                        <p>Catch guests`&apos;` attention with a spot title that highlights what makes
                             your place special.
                         </p></label>
                     <input

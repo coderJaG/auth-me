@@ -9,7 +9,7 @@ const GET_ALL_SPOT_REVIEWS = 'spots/getAllSpotReviews';
 const CREATE_REVIEW = 'spots/createReview'
 const ADD_IMAGE = 'spots/addImage'
 const DELETE_SPOT = 'spots/deleteSpot'
-
+let state;
 
 const getAllSpots = (spots) => {
     return ({

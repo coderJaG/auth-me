@@ -17,7 +17,7 @@ const SpotDetails = () => {
 
   const { spotId } = useParams();
   const spot = useSelector(state => state.spots.spot);
-  const reviews = useSelector(state => state.spots.reviews)
+  // const reviews = useSelector(state => state.spots.reviews)
 
   useEffect(() => {
     dispatch(spotDetails(spotId));
@@ -63,8 +63,8 @@ const SpotDetails = () => {
           {(spot.numReviews > 0) && <span>{spot.numReviews} reviews</span>}
           {(spot.numReviews === 0) && <h3>New</h3>}
         </div>
-        <div className="tags reserve-btn"> <button>Reserve</button></div>
-      </div>
+        <div className="tags reserve-btn"> <button onClick={''}>Reserve</button></div>
+      </div> 
       <Reviews />
     </div>
 

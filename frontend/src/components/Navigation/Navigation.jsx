@@ -1,5 +1,5 @@
-import { Link, NavLink } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { NavLink } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
 import OpenModalButton from '../OpenModalButton';
 import LoginFormModal from '../LoginFormModal';
@@ -11,6 +11,7 @@ import logo from '/logo.png'
 
 
 const Navigation = () => {
+    const dispatch =  useDispatch();
 
     const currUser = useSelector(state => state.session.user)
 
